@@ -1,0 +1,3 @@
+gradlew run -PteamA=examplefuncsplayer -PteamB=penguin_1 -Pmaps=shrine
+
+cd C:\Users\dbuis\Desktop\Team Penguin\battlecode-scaffold-2017-master
