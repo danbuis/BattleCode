@@ -135,7 +135,7 @@ public class ArchonAI {
 		float totalFriendlyY=0;
 		
 		float totalEnemyX=0;
-		float totalEnemyY=0;
+		float totalEnemyY=0;		
 		
 		for (MapLocation loc : friendlyarchons){
 			totalFriendlyX+=loc.x;
@@ -146,6 +146,16 @@ public class ArchonAI {
 			totalEnemyX+=loc.x;
 			totalEnemyY+=loc.y;
 		}
+		
+		//piggyback these values to determine map symmetry
+				try {
+					if(rc.readBroadcast(20)==0){
+						determineSymmetry(totalFriendlyX, totalFriendlyY, totalEnemyX, totalEnemyY);
+					}
+				} catch (GameActionException e1) {
+					// Auto-generated catch block
+					e1.printStackTrace();
+				}
 		
 		float verticalDifference = totalFriendlyY-totalEnemyY;
 		float horizontalDifference = totalFriendlyX-totalEnemyX;
@@ -191,6 +201,33 @@ public class ArchonAI {
 			
 		}
 
+	}
+
+
+
+	/**
+	 * determine symmetry.  If a mirror, than either total X or Y will be the same, else its reflection
+	 * @param totalFriendlyX
+	 * @param totalFriendlyY
+	 * @param totalEnemyX
+	 * @param totalEnemyY
+	 * @throws GameActionException 
+	 */
+	private static void determineSymmetry(float totalFriendlyX, float totalFriendlyY, float totalEnemyX,
+			float totalEnemyY) throws GameActionException {
+		RobotController rc = RobotPlayer.rc;
+		if(totalFriendlyX==totalEnemyX || totalFriendlyY==totalEnemyY){
+			rc.broadcast(20, 1);
+			System.out.println("Mirror Symmetry");
+			System.out.println("friendlyX:"+totalFriendlyX);
+			System.out.println("friendlyY:"+totalFriendlyY);
+			System.out.println("enemyX:"+totalEnemyX);
+			System.out.println("enemyY:"+totalEnemyY);
+		}else{
+			rc.broadcast(20,2);
+			System.out.println("Rotation Symmetry");
+		}
+		
 	}
 
 }
