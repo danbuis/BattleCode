@@ -15,6 +15,11 @@ public class ArchonAI {
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
             	
+            	//if 500+ bullets, donate
+            	if(rc.getTeamBullets()>500){
+            		rc.donate(10);
+            	}
+            	
             	//if turn 0 and no other archon has selected a home side
             	if (rc.getRoundNum()== 1 && rc.readBroadcast(0)==0){
             		//System.out.println("about to call selection method");
