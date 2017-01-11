@@ -22,6 +22,7 @@ public enum Channels {
 	SOUTHEDGE(24);
 	
 	
+	
 	public int channelNumber;
 	
 	private Channels(int channelNumberInside){

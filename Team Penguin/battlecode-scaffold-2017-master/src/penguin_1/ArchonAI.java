@@ -46,11 +46,13 @@ public class ArchonAI {
                 			rc.hireGardener((Direction.getNorth()));
                 			hiredGardeners++;
                     		//update gardener count
+                			currentGardeners++;
                     		rc.broadcast(2, currentGardeners);
                 		}else if (rc.canHireGardener(Direction.getSouth())){
                 			rc.hireGardener(Direction.getSouth());
                 			hiredGardeners++;
                     		//update gardener count
+                			currentGardeners++;
                     		rc.broadcast(2, currentGardeners);
                     		//for corner cases where neither one works, we need to increment hiredGardeners to that it tries the other side again
                 		}else if(rc.canHireGardener(Direction.getEast()) || rc.canHireGardener(Direction.getWest())){ 
@@ -63,11 +65,13 @@ public class ArchonAI {
                 			rc.hireGardener((Direction.getEast()));
                 			hiredGardeners++;
                     		//update gardener count
+                			currentGardeners++;
                     		rc.broadcast(2, currentGardeners);
                 		}else if (rc.canHireGardener(Direction.getWest())){
                 			rc.hireGardener(Direction.getWest());
                 			hiredGardeners++;
                     		//update gardener count
+                			currentGardeners++;
                     		rc.broadcast(2, currentGardeners);
                 		}else if(rc.canHireGardener(Direction.getNorth()) || rc.canHireGardener(Direction.getSouth())){ 
                 			hiredGardeners++;
