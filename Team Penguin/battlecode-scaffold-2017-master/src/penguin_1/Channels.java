@@ -12,7 +12,15 @@ public enum Channels {
 	CURRENTLUMBERJACKS(4),
 	CURRENTTANKS(5),
 	CURRENTSCOUTS(6),
-	CURRENTROUND(7);
+	
+	
+	//map Info
+	SYMMETRY(20), //1 = mirror, 2 = rotation
+	EASTEDGE(21),  //edges stored as truncated int of (coordinate times 1,000)
+	NORTHEDGE(22),
+	WESTEDGE(23),
+	SOUTHEDGE(24);
+	
 	
 	public int channelNumber;
 	

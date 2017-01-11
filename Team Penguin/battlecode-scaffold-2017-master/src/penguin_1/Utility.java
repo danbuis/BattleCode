@@ -11,7 +11,91 @@ public class Utility {
     static Direction randomDirection() {
         return new Direction((float)Math.random() * 2 * (float)Math.PI);
     }
+    
+    static boolean tryMoveToLocation(int x, int y) throws GameActionException{
+    	MapLocation mapLoc = new MapLocation((x/1000), (y/1000));
+    	return tryMoveToLocation(mapLoc);
+    }
+    
+    /**Moves toward a given MapLocation
+     * @throws GameActionException 
+     * 
+     */
+    
+    static boolean tryMoveToLocation(MapLocation loc) throws GameActionException{
+    	RobotController rc = RobotPlayer.rc;
+    	Direction dir = rc.getLocation().directionTo(loc);
+    	return tryMove(dir);
+    }
 
+    /**
+     * try to move to a target Y value.  
+     * @param targetY is coordinate*1000
+     * @return
+     * @throws GameActionException 
+     */
+    static void tryMoveVertical(int targetY) throws GameActionException{
+    	RobotController rc = RobotPlayer.rc;
+    	int currentY = (int)(rc.getLocation().y *1000);
+    	int diffY = currentY-targetY;
+    	
+    	//if need to move North
+    	if (diffY>0){
+    		if(Math.abs(diffY)>1000){ //if diff greater than 1 (default stride)
+    			 tryMove(Direction.getNorth());
+    		}else{ //diff less than 1
+    			float remainY = Math.abs(diffY)/1000;
+    			if(rc.canMove(Direction.getNorth(), remainY)){
+    				rc.move(Direction.getNorth(), remainY);
+    				}
+    			}
+    		
+    	}else{ //we need to move south
+    		if(Math.abs(diffY)>1000){ //if diff greater than 1 (default stride)
+    			tryMove(Direction.getSouth());
+    		}else{ //diff less than 1
+    			float remainY = Math.abs(diffY)/1000;
+    			if(rc.canMove(Direction.getSouth(), remainY)){
+    				rc.move(Direction.getSouth(), remainY);
+    			}
+    		}
+    	}
+    }
+    
+    /**
+     * try to move to a target X value.  
+     * @param targetX is coordinate*1000
+     * @return
+     * @throws GameActionException 
+     */
+    static void tryMoveHorizontal(int targetX) throws GameActionException{
+    	RobotController rc = RobotPlayer.rc;
+    	int currentX = (int)(rc.getLocation().x *1000);
+    	int diffX = currentX-targetX;
+    	
+    	//if need to move West
+    	if (diffX>0){
+    		if(Math.abs(diffX)>1000){ //if diff greater than 1 (min stride)
+    			 tryMove(Direction.getWest());
+    		}else{ //diff less than 1
+    			float remainX = Math.abs(diffX)/1000;
+    			if(rc.canMove(Direction.getWest(), remainX)){
+    				rc.move(Direction.getWest(), remainX);
+    				}
+    			}
+    		
+    	}else{ //we need to move south
+    		if(Math.abs(diffX)>1000){ //if diff greater than 1 (default stride)
+    			tryMove(Direction.getEast());
+    		}else{ //diff less than 1
+    			float remainX = Math.abs(diffX)/1000;
+    			if(rc.canMove(Direction.getEast(), remainX)){
+    				rc.move(Direction.getEast(), remainX);
+    			}
+    		}
+    	}
+    }
+    
     /**
      * Attempts to move in a given direction, while avoiding small obstacles directly in the path.
      *
@@ -20,7 +104,7 @@ public class Utility {
      * @throws GameActionException
      */
     static boolean tryMove(Direction dir) throws GameActionException {
-        return tryMove(dir,20,3);
+        return tryMove(dir,20,5);
     }
 
     /**
