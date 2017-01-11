@@ -27,6 +27,14 @@ public class Utility {
     	Direction dir = rc.getLocation().directionTo(loc);
     	return tryMove(dir);
     }
+    
+    static void tryMoveToLocationSlow(MapLocation loc, float speed) throws GameActionException{
+    	RobotController rc = RobotPlayer.rc;
+    	Direction dir = rc.getLocation().directionTo(loc);
+    	if (rc.canMove(dir, speed)){
+    		rc.move(dir,speed);
+    	}
+    }
 
     /**
      * try to move to a target Y value.  

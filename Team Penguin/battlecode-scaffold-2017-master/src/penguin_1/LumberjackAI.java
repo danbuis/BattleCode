@@ -46,7 +46,7 @@ public class LumberjackAI {
                     robots = rc.senseNearbyRobots(-1,enemy);
 
                     // If there is a robot, move towards it
-                    if(robots.length > 0) {
+                    if(robots.length > 0 && !rc.hasMoved()) {
                         MapLocation myLocation = rc.getLocation();
                         MapLocation enemyLocation = robots[0].getLocation();
                         Direction toEnemy = myLocation.directionTo(enemyLocation);
@@ -54,9 +54,9 @@ public class LumberjackAI {
                         Utility.tryMove(toEnemy);
                     } else {
                         // Move Randomly, as long as we aren't targeting a specific tree
-                    	//if(targetNeutralTree==null){
+                    	if(/*targetNeutralTree==null*/ !rc.hasMoved()){
                             Utility.tryMove(Utility.randomDirection());
-                    //	}
+                    	}
 
                     }
                 }
@@ -85,7 +85,7 @@ public class LumberjackAI {
 			}
 			
 			// if tree no longer there, then remove target.
-			if(rc.senseTreeAtLocation(targetNeutralTree.location)==null){
+			if(targetNeutralTree != null && !rc.canSenseTree(targetNeutralTree.ID)){
 				targetNeutralTree = null;
 			}
 		}catch (Exception e) {
