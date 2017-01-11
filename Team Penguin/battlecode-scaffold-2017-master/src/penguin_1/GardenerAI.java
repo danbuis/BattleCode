@@ -155,7 +155,7 @@ public class GardenerAI {
 		Boolean buildLumberjack=false;
 		
 		//plant a tree
-        if (Math.random()<0.01){
+        if (Math.random()<0.03){
         	plantTree=true;
         }
         

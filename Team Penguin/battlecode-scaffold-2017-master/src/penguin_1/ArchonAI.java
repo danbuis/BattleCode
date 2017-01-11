@@ -4,6 +4,8 @@ import battlecode.common.*;
 
 public class ArchonAI {
 	
+	static int hiredGardeners=0;
+	
 	
 	static void runArchon() throws GameActionException {
 		RobotController rc = RobotPlayer.rc;
@@ -31,9 +33,6 @@ public class ArchonAI {
             		setupCensus();
             	}
 
-                // Generate a random direction
-                Direction dir = Utility.randomDirection();
-
                 // Build a gardener in direction perpendicular to home as long as there are 4 or less gardeners
                 int currentGardeners = rc.readBroadcast(2);
                 if (currentGardeners<4 && rc.getRoundNum()%50!=0 && rc.getRoundNum()%50!=1){
@@ -41,30 +40,38 @@ public class ArchonAI {
                 	//determine home orientation;
                 	int direction = rc.readBroadcast(0)%2;
                 	if (direction==1){ //if odd we are using east or west, so hire north and south
-                		if (currentGardeners%2==1 && rc.canHireGardener(Direction.getNorth()))
+                		//if we have an odd number, and can hire north, do so.
+                		if ((hiredGardeners%2==1 && rc.canHireGardener(Direction.getNorth())))
                 		{
                 			rc.hireGardener((Direction.getNorth()));
-                			currentGardeners++;
+                			hiredGardeners++;
                     		//update gardener count
                     		rc.broadcast(2, currentGardeners);
                 		}else if (rc.canHireGardener(Direction.getSouth())){
                 			rc.hireGardener(Direction.getSouth());
-                			currentGardeners++;
+                			hiredGardeners++;
                     		//update gardener count
                     		rc.broadcast(2, currentGardeners);
-                		}	
+                    		//for corner cases where neither one works, we need to increment hiredGardeners to that it tries the other side again
+                		}else if(rc.canHireGardener(Direction.getEast()) || rc.canHireGardener(Direction.getWest())){ 
+                			hiredGardeners++;
+         
+                		}
                 	}else{
                 		if (currentGardeners%2==1 && rc.canHireGardener(Direction.getEast()))
                 		{
                 			rc.hireGardener((Direction.getEast()));
-                			currentGardeners++;
+                			hiredGardeners++;
                     		//update gardener count
                     		rc.broadcast(2, currentGardeners);
                 		}else if (rc.canHireGardener(Direction.getWest())){
                 			rc.hireGardener(Direction.getWest());
-                			currentGardeners++;
+                			hiredGardeners++;
                     		//update gardener count
                     		rc.broadcast(2, currentGardeners);
+                		}else if(rc.canHireGardener(Direction.getNorth()) || rc.canHireGardener(Direction.getSouth())){ 
+                			hiredGardeners++;
+         
                 		}
                 	}
                 		
@@ -93,7 +100,7 @@ public class ArchonAI {
 		try {
 			rc.broadcast(2, 0);
 		} catch (GameActionException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -165,7 +172,7 @@ public class ArchonAI {
 					rc.broadcast(0, 4);
 					//System.out.println("south");
 				} catch (GameActionException e) {
-					// TODO Auto-generated catch block
+					//Auto-generated catch block
 					e.printStackTrace();
 				}
 			}else{
@@ -173,7 +180,7 @@ public class ArchonAI {
 					rc.broadcast(0, 2);
 					//System.out.println("north");
 				} catch (GameActionException e) {
-					// TODO Auto-generated catch block
+					//Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

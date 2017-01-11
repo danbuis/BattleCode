@@ -53,8 +53,11 @@ public class LumberjackAI {
 
                         Utility.tryMove(toEnemy);
                     } else {
-                        // Move Randomly
-                        Utility.tryMove(Utility.randomDirection());
+                        // Move Randomly, as long as we aren't targeting a specific tree
+                    	//if(targetNeutralTree==null){
+                            Utility.tryMove(Utility.randomDirection());
+                    //	}
+
                     }
                 }
 
@@ -73,17 +76,17 @@ public class LumberjackAI {
 		RobotController rc = RobotPlayer.rc;
 		
 		try{
+			//try to chop it
 			if(rc.canChop(targetNeutralTree.ID)){
-				int currentHealth=(int) targetNeutralTree.getHealth();
 				rc.chop(targetNeutralTree.ID);
-			
-				//if just killed tree, reset
-				if(currentHealth<=GameConstants.LUMBERJACK_CHOP_DAMAGE){
-					targetNeutralTree = null;
-				}
-			
-			}else if(rc.canMove(targetNeutralTree.location)){
+			} //if that fails, move towards it
+			else if(rc.canMove(targetNeutralTree.location)){
 				rc.move(targetNeutralTree.location);
+			}
+			
+			// if tree no longer there, then remove target.
+			if(rc.senseTreeAtLocation(targetNeutralTree.location)==null){
+				targetNeutralTree = null;
 			}
 		}catch (Exception e) {
             System.out.println("Lumberjack Exception");
