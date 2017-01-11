@@ -19,7 +19,8 @@ public enum Channels {
 	EASTEDGE(21),  //edges stored as truncated int of (coordinate times 1,000)
 	NORTHEDGE(22),
 	WESTEDGE(23),
-	SOUTHEDGE(24);
+	SOUTHEDGE(24),
+	EDGEFOUND(25);
 	
 	
 	

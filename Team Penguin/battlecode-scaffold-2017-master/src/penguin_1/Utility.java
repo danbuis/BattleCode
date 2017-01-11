@@ -38,31 +38,37 @@ public class Utility {
 
     /**
      * try to move to a target Y value.  
-     * @param targetY is coordinate*1000
+     * @param targetY
      * @return
      * @throws GameActionException 
      */
-    static void tryMoveVertical(int targetY) throws GameActionException{
+    static void tryMoveVertical(float targetY) throws GameActionException{
     	RobotController rc = RobotPlayer.rc;
-    	int currentY = (int)(rc.getLocation().y *1000);
-    	int diffY = currentY-targetY;
+    	float currentY = rc.getLocation().y ;
+    	float diffY = currentY-targetY;
+    	
+    	System.out.println("currentY: "+currentY);
+    	System.out.println("targetY: "+targetY);
+    	System.out.println("diffY: "+diffY);
     	
     	//if need to move North
     	if (diffY>0){
-    		if(Math.abs(diffY)>1000){ //if diff greater than 1 (default stride)
+    		System.out.println("moving north vert");
+    		if(Math.abs(diffY)>1){ //if diff greater than 1 (default stride)
     			 tryMove(Direction.getNorth());
     		}else{ //diff less than 1
-    			float remainY = Math.abs(diffY)/1000;
+    			float remainY = Math.abs(diffY);
     			if(rc.canMove(Direction.getNorth(), remainY)){
     				rc.move(Direction.getNorth(), remainY);
     				}
     			}
     		
     	}else{ //we need to move south
-    		if(Math.abs(diffY)>1000){ //if diff greater than 1 (default stride)
+    		System.out.println("moving south vert");
+    		if(Math.abs(diffY)>1){ //if diff greater than 1 (default stride)
     			tryMove(Direction.getSouth());
     		}else{ //diff less than 1
-    			float remainY = Math.abs(diffY)/1000;
+    			float remainY = Math.abs(diffY);
     			if(rc.canMove(Direction.getSouth(), remainY)){
     				rc.move(Direction.getSouth(), remainY);
     			}
@@ -72,31 +78,31 @@ public class Utility {
     
     /**
      * try to move to a target X value.  
-     * @param targetX is coordinate*1000
+     * @param targetX
      * @return
      * @throws GameActionException 
      */
-    static void tryMoveHorizontal(int targetX) throws GameActionException{
+    static void tryMoveHorizontal(float targetX) throws GameActionException{
     	RobotController rc = RobotPlayer.rc;
-    	int currentX = (int)(rc.getLocation().x *1000);
-    	int diffX = currentX-targetX;
+    	float currentX = rc.getLocation().x ;
+    	float diffX = currentX-targetX;
     	
     	//if need to move West
     	if (diffX>0){
-    		if(Math.abs(diffX)>1000){ //if diff greater than 1 (min stride)
+    		if(Math.abs(diffX)>1){ //if diff greater than 1 (min stride)
     			 tryMove(Direction.getWest());
     		}else{ //diff less than 1
-    			float remainX = Math.abs(diffX)/1000;
+    			float remainX = Math.abs(diffX);
     			if(rc.canMove(Direction.getWest(), remainX)){
     				rc.move(Direction.getWest(), remainX);
     				}
     			}
     		
     	}else{ //we need to move south
-    		if(Math.abs(diffX)>1000){ //if diff greater than 1 (default stride)
+    		if(Math.abs(diffX)>1){ //if diff greater than 1 (default stride)
     			tryMove(Direction.getEast());
     		}else{ //diff less than 1
-    			float remainX = Math.abs(diffX)/1000;
+    			float remainX = Math.abs(diffX);
     			if(rc.canMove(Direction.getEast(), remainX)){
     				rc.move(Direction.getEast(), remainX);
     			}
@@ -112,7 +118,7 @@ public class Utility {
      * @throws GameActionException
      */
     static boolean tryMove(Direction dir) throws GameActionException {
-        return tryMove(dir,20,5);
+        return tryMove(dir,20,4);
     }
 
     /**
@@ -129,7 +135,7 @@ public class Utility {
     	RobotController rc = RobotPlayer.rc;
     	
         // First, try intended direction
-        if (rc.canMove(dir)) {
+        if (rc.canMove(dir) && !rc.hasMoved()) {
             rc.move(dir);
             return true;
         }
@@ -140,12 +146,12 @@ public class Utility {
 
         while(currentCheck<=checksPerSide) {
             // Try the offset of the left side
-            if(rc.canMove(dir.rotateLeftDegrees(degreeOffset*currentCheck))) {
+            if(!rc.hasMoved() && rc.canMove(dir.rotateLeftDegrees(degreeOffset*currentCheck))) {
                 rc.move(dir.rotateLeftDegrees(degreeOffset*currentCheck));
                 return true;
             }
             // Try the offset on the right side
-            if(rc.canMove(dir.rotateRightDegrees(degreeOffset*currentCheck))) {
+            if(!rc.hasMoved() && rc.canMove(dir.rotateRightDegrees(degreeOffset*currentCheck))) {
                 rc.move(dir.rotateRightDegrees(degreeOffset*currentCheck));
                 return true;
             }

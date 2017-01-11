@@ -228,6 +228,11 @@ public class ArchonAI {
 			System.out.println("Rotation Symmetry");
 		}
 		
+		rc.broadcast(21, -1);
+		rc.broadcast(22, -1);
+		rc.broadcast(23, -1);
+		rc.broadcast(24, -1);
+		
 	}
 
 }
