@@ -1,3 +1,4 @@
 gradlew run -PteamA=examplefuncsplayer -PteamB=penguin_1 -Pmaps=Hurdle
+gradlew run -PteamA=penguin_1 -PteamB=examplefuncsplayer -Pmaps=Hurdle
 
 cd C:\Users\dbuis\Desktop\BattleCode\Team Penguin\battlecode-scaffold-2017-master

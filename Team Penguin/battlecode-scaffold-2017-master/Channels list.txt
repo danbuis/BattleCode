@@ -1,0 +1,59 @@
+/* 1 = east, 2 = north, 3 = west, 4 = south*/	
+	HOMESIDE (0),
+	
+	//census taken every 50 turns
+	CURRENTARCHONS(1),
+	CURRENTGARDENERS(2),
+	CURRENTSOLDIERS(3),
+	CURRENTLUMBERJACKS(4),
+	CURRENTTANKS(5),
+	CURRENTSCOUTS(6),
+	
+	
+	//map Info
+	SYMMETRY(20), //1 = mirror, 2 = rotation
+	EASTEDGE(21),  //edges stored as truncated int of (coordinate times 1,000)
+	NORTHEDGE(22),
+	WESTEDGE(23),
+	SOUTHEDGE(24),
+	EDGEFOUND(25),
+	GARDENLINE(26);
+	
+	//map Locations
+	RELATIVECENTERX (100)
+	RELATIVECENTERY (101)
+	
+	
+	TODO items
+	gardeners only spawn trees on even spaces
+	archons determine map edges
+	lumberjacks shake tree
+	lumberjacks don't bob around when chopping trees
+	rebalance gardener maintenance spawning
+	randomize archon spawning in case of dense forests
+	
+	gardeners more likely to spawn lumberjack if neutral tree in sensing range
+	send spawned fighting units to approximate center of map
+	jitter when not other orders
+	
+	scout ai
+	completes 4 edge values
+	tries to maintain distance 8.5 from enemy
+	limited deployment
+	covers flanks
+	listens to broadcasts, filters to find likely enemy broadcasts, averages the result
+	
+	add channels for coordinate info
+	center of broadcasts
+	spotted enemy (5 - via scouts)
+	located neutral tree (3)
+	enemy archon (3 channels per, x y id)
+	
+	Fine tune initial spawning
+	-2 gardeners
+	-1 melee
+	
+	
+	
+	
+	

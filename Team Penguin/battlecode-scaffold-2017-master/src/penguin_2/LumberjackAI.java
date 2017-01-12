@@ -1,4 +1,4 @@
-package penguin_1;
+package penguin_2;
 
 import battlecode.common.*;
 

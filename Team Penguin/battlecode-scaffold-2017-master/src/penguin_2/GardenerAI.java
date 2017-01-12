@@ -1,4 +1,4 @@
-package penguin_1;
+package penguin_2;
 
 import battlecode.common.*;
 
@@ -10,6 +10,7 @@ public strictfp class GardenerAI {
     static Boolean atGardenLine=false;
     static Boolean homeEdgeFound=false;
     static float gardenLineValue=-5;
+    static Boolean plantTree = false;
     
 
 	public static void runGardener() throws GameActionException {
@@ -230,34 +231,68 @@ public strictfp class GardenerAI {
 			
 		}
 		
+
+
+	
 	/*Handles things like unit spawn, planting and watering
 	 * 
 	 */
 	private static void maintenance() {
 		RobotController rc = RobotPlayer.rc;
-		Boolean plantTree = false;
 		Boolean buildSoldier = false;
 		Boolean buildLumberjack=false;
+		int roundNumber = rc.getRoundNum();
 		
-		//plant a tree
-        if (Math.random()<0.03){
+		TreeInfo[] nearTrees = rc.senseNearbyTrees();
+		boolean isNearNeutralTree = false;
+		
+		for(TreeInfo info:nearTrees){
+			if(info.team.equals(Team.NEUTRAL)){
+				isNearNeutralTree = true;
+				break;
+			}
+		}
+		
+		RobotInfo[] nearRobots = rc.senseNearbyRobots();
+		boolean isNearEnemyRobot = false;
+		
+		for (RobotInfo info : nearRobots)
+		{
+			if(!info.team.equals(rc.getTeam())){
+				isNearEnemyRobot = true;
+			}
+		}
+		
+		System.out.println("Before tree check"+plantTree);
+		//plant a tree using a class level variable to try to plant a tree later
+        if (!plantTree && Math.random()<0.1 && roundNumber<100){
+        	plantTree=true;
+        }else if (Math.random()<0.03){
         	plantTree=true;
         }
+        System.out.println("After tree check"+plantTree);
         
        //Attempt unit builds
         if(Math.random()<0.02){
         	buildSoldier=true;
-        }else if (Math.random() < 0.01){
+        }else if (Math.random() < 0.01 || isNearNeutralTree || isNearEnemyRobot){
         	buildLumberjack = true;
         }
         
         try {
 		
+        	
+        	//TODO more flexible unit deployment
         	if (homeEdge == 1){
-			
-				if(plantTree && rc.canPlantTree(Direction.getEast())){
+        		
+        		//is tree ready, is there a space, and is it even numbered?
+				if(plantTree && rc.canPlantTree(Direction.getEast()) && ((int)rc.getLocation().y)%2==0){
+					//if so, plant tree
 					rc.plantTree(Direction.getEast());
+					//reset variable
+					plantTree=false;
 				}
+				//is soldier ready, and is there space?
 				if(buildSoldier && rc.canBuildRobot(RobotType.SOLDIER, Direction.getWest())){
 					rc.buildRobot(RobotType.SOLDIER, Direction.getWest());
 				}
@@ -266,8 +301,9 @@ public strictfp class GardenerAI {
 				}
 			
 			}else if (homeEdge==2){
-				if(plantTree && rc.canPlantTree(Direction.getNorth())){
+				if(plantTree && rc.canPlantTree(Direction.getNorth()) && ((int)rc.getLocation().x)%2==0){
 					rc.plantTree(Direction.getNorth());
+					plantTree=false;
 				}
 				if(buildSoldier && rc.canBuildRobot(RobotType.SOLDIER, Direction.getSouth())){
 					rc.buildRobot(RobotType.SOLDIER, Direction.getSouth());
@@ -276,8 +312,9 @@ public strictfp class GardenerAI {
 					rc.buildRobot(RobotType.LUMBERJACK, Direction.getSouth());
 				}
 			}else if (homeEdge==3){
-				if(plantTree && rc.canPlantTree(Direction.getWest())){
+				if(plantTree && rc.canPlantTree(Direction.getWest()) && ((int)rc.getLocation().y)%2==0){
 					rc.plantTree(Direction.getWest());
+					plantTree=false;
 				}
 				if(buildSoldier && rc.canBuildRobot(RobotType.SOLDIER, Direction.getEast())){
 					rc.buildRobot(RobotType.SOLDIER, Direction.getEast());
@@ -286,8 +323,9 @@ public strictfp class GardenerAI {
 					rc.buildRobot(RobotType.LUMBERJACK, Direction.getEast());
 				}
 			}else{
-				if(plantTree && rc.canPlantTree(Direction.getSouth())){
+				if(plantTree && rc.canPlantTree(Direction.getSouth()) && ((int)rc.getLocation().x)%2==0){
 					rc.plantTree(Direction.getSouth());
+					plantTree=false;
 				}
 				if(buildSoldier && rc.canBuildRobot(RobotType.SOLDIER, Direction.getNorth())){
 					rc.buildRobot(RobotType.SOLDIER, Direction.getNorth());
@@ -297,8 +335,8 @@ public strictfp class GardenerAI {
 				}
 			}
         	
-        	//see if a nearby tree needs watering
-        	TreeInfo[] nearTrees = rc.senseNearbyTrees((float)3.5);
+        	//see if a nearby tree needs watering using tree info from earlier
+        	
         	for(TreeInfo info:nearTrees){
         		if(info.team.equals(rc.getTeam()) && info.health<90 && rc.canWater(info.ID)){
         			rc.water(info.ID);
