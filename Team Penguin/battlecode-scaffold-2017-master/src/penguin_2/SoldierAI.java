@@ -18,7 +18,7 @@ public class SoldierAI {
                 MapLocation myLocation = rc.getLocation();
                 
                 // Move 
-                Utility.tryMove(Utility.randomDirection());
+                MoveAttackLoop.generalMovement();
 
                 // See if there are any nearby enemy robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);

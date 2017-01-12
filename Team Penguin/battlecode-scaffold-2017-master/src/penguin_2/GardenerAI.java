@@ -18,8 +18,6 @@ public strictfp class GardenerAI {
         
         RobotController rc = RobotPlayer.rc;
 
-
-
         while (true) {
 
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
@@ -277,7 +275,7 @@ public strictfp class GardenerAI {
 		
 		System.out.println("Before tree check"+plantTree);
 		//plant a tree using a class level variable to try to plant a tree later
-        if (!plantTree && Math.random()<0.1 && roundNumber<100){
+        if (!plantTree && Math.random()<0.1 && roundNumber<150){
         	plantTree=true;
         }else if (Math.random()<0.03){
         	plantTree=true;
@@ -287,7 +285,7 @@ public strictfp class GardenerAI {
        //Attempt unit builds
         if(Math.random()<0.02){
         	buildSoldier=true;
-        }else if (Math.random() < 0.01 || isNearNeutralTree || isNearEnemyRobot){
+        }else if (Math.random() < 0.008 || isNearNeutralTree || isNearEnemyRobot){
         	buildLumberjack = true;
         }
         

@@ -260,6 +260,13 @@ public strictfp class ArchonAI {
 		System.out.println("relative centerX :"+relativeCenterX);
 		System.out.println("relative centerX :"+relativeCenterY);
 		
+		//determine average center of enemy archons
+		float enemyCenterX = totalEnemyX/numberOfArchons;
+		float enemyCenterY = totalEnemyY/numberOfArchons;
+		
+		rc.broadcast(102, (int)(enemyCenterX*1000));
+		rc.broadcast(103, (int)(enemyCenterY*1000));
+		
 	}
 
 }

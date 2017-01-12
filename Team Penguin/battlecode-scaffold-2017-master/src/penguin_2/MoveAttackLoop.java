@@ -16,7 +16,9 @@ public class MoveAttackLoop {
 	 */
 	
 	static boolean arrivedAtRallyPoint = false;
-	static MapLocation rallyPoint= null;
+	static MapLocation rallyPoint = new MapLocation(-1,-1);
+	static MapLocation expectedEnemyCenter = new MapLocation(-1, -1);
+	static MapLocation targetPoint;
 	
 	static boolean receivedNewTargetLocation = false;
 	
@@ -27,37 +29,68 @@ public class MoveAttackLoop {
 	public static void generalMovement() throws GameActionException{
 		RobotController rc = RobotPlayer.rc;
 		
+		
+		System.out.println("first check: " + (rallyPoint.x<1));
 		//check to see if we have the rally point stored
-		if(rallyPoint.equals(null)){
+		if(rallyPoint.x<0){
 			rallyPoint = new MapLocation((float) (rc.readBroadcast(100)/1000.0), (float)(rc.readBroadcast(101)/1000.0));
 			System.out.println("setting rally point");
 		}
 		
+		if(expectedEnemyCenter.x<0){
+			expectedEnemyCenter = new MapLocation((float) (rc.readBroadcast(102)/1000), (float)(rc.readBroadcast(103)/1000));
+		}
+		
+		
+		System.out.println("Second check: "+ !arrivedAtRallyPoint +" + "+(rallyPoint.x>-1));
 		//check to see if we are close enough to the rally point
-		if(!arrivedAtRallyPoint && !rallyPoint.equals(null)){
+		if(!arrivedAtRallyPoint && rallyPoint.x>-1){
 			float distanceToRally = Utility.distanceBetweenMapLocations(rc.getLocation(), rallyPoint);
+			System.out.println("not close to rally point yet: "+distanceToRally);
 			
 			//close enough to count as reaching it
 			if(distanceToRally<3){
+				System.out.println("At rally point");
 				arrivedAtRallyPoint=true;
 			}
 		}
 		
+		System.out.println("Third Check: "+!receivedNewTargetLocation);
 		//if not recieved new target, move to rally point
-		if(!receivedNewTargetLocation && !rallyPoint.equals(null)){
+		if(!receivedNewTargetLocation && rallyPoint.x>(-1)){
+			System.out.println("moving to rally point... or maybe around it...");
 			generalMove(rallyPoint);
+		}
+		
+
+		//if at rally, periodically assign new destinations to people
+		if(arrivedAtRallyPoint && rc.getRoundNum()%150==0 && !receivedNewTargetLocation){
+			System.out.println("recieved new target point");
+			receivedNewTargetLocation = true;
+			targetPoint = expectedEnemyCenter;
+			generalMove(targetPoint);
+			
+		}else if (receivedNewTargetLocation){ //only if you've been rallied and given a place to go
+			generalMove(targetPoint);
 		}
 		
 		
 	}
 	
 	/**
-	 * general movement algorithm.  Checks for enemies and breaks plan accordingly
+	 * general movement algorithm.  Checks for enemies and breaks plan accordingly.
 	 * @param rallyPoint2
 	 * @throws GameActionException 
 	 */
 	
 	private static void generalMove(MapLocation targetLocation) throws GameActionException {
+		
+		
+		//If nearby target, move accordingly
+		//If target in correct quadrant, move accordingly
+		//in emergency, move accordingly
+		//else
+		
 		Utility.tryMoveToLocation(targetLocation);
 		
 	}
