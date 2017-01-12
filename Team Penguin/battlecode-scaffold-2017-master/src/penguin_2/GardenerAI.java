@@ -104,6 +104,18 @@ public strictfp class GardenerAI {
 		RobotController rc = RobotPlayer.rc;
 		try {
 			if(homeEdge%2==0){
+				/*
+				//first try to correct to get back to integer point
+				float currentX = rc.getLocation().x;
+				if((Math.abs(currentX-(int)currentX)>0.000001)){
+					//randomly try left
+					if(Math.random()<0.5){
+						Utility.tryMoveHorizontal((float)Math.floor(currentX));
+					}else{
+						Utility.tryMoveHorizontal((float)Math.ceil(currentX));
+					}
+				}*/
+				
 				if(backAndForthBounces%2==0){
 					if(rc.canMove(Direction.getEast())){
 						rc.move(Direction.getEast());

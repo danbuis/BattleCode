@@ -210,5 +210,23 @@ public strictfp class Utility {
 
         return (perpendicularDist <= rc.getType().bodyRadius);
     }
+    
+    /**
+     * uses pythagorean to determine distance
+     * @param loc1
+     * @param loc2
+     * @return
+     */
+    
+    static float distanceBetweenMapLocations(MapLocation loc1, MapLocation loc2){
+    	//traditional pythagorean
+    	float distanceX = loc1.x-loc2.x;
+    	float distanceY = loc1.y-loc2.y;
+    	
+    	float totalSquared = (distanceX*distanceX)+(distanceY*distanceY);
+    	
+    	return (float) Math.sqrt(totalSquared);
+    	
+    }
 
 }
