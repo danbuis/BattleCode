@@ -51,11 +51,11 @@ public strictfp class LumberjackAI {
                         MapLocation enemyLocation = robots[0].getLocation();
                         Direction toEnemy = myLocation.directionTo(enemyLocation);
 
-                        Utility.tryMove(toEnemy);
+                        Utility.tryMove(toEnemy, rc.getType().strideRadius);
                     } else {
                         // Move Randomly, as long as we aren't targeting a specific tree
                     	if(/*targetNeutralTree==null*/ !rc.hasMoved()){
-                            Utility.tryMove(Utility.randomDirection());
+                            Utility.tryMove(Utility.randomDirection(), rc.getType().strideRadius);
                     	}
 
                     }

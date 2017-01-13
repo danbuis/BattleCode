@@ -46,7 +46,26 @@ public class SoldierAI {
 
 	public static void moveAroundHostiles(RobotInfo[] enemyRobots) {
 		// TODO Auto-generated method stub
+		RobotController rc = RobotPlayer.rc;
+		RobotInfo closestRobot = null;
+		float closestDist = 90;
+		Direction dirToEnemy;
 		
+		
+		//find the closest
+		for(RobotInfo info: enemyRobots){
+			if(Utility.distanceBetweenMapLocations(rc.getLocation(), info.location)<closestDist){
+				closestRobot = info;
+			}
+		}
+		
+		//get direction to that robot
+		if(closestRobot != null){
+			dirToEnemy = rc.getLocation().directionTo(closestRobot.location);
+		}
+		
+		
+	
 	}
 
 }

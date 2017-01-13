@@ -88,6 +88,7 @@ public class MoveAttackLoop {
 		
 		//If nearby target, move accordingly
 		RobotInfo[] enemyRobots = Utility.checkForEnemyRobots();
+		
 		if(enemyRobots.length!=0){
 			if (rc.getType()==RobotType.SOLDIER){
 				SoldierAI.moveAroundHostiles(enemyRobots);
@@ -98,7 +99,9 @@ public class MoveAttackLoop {
 		//in emergency, move accordingly
 		//else
 		
-		Utility.tryMoveToLocationSlow(targetLocation,1);
+		else{
+			Utility.tryMoveToLocation(targetLocation);
+		}
 		
 	}
 

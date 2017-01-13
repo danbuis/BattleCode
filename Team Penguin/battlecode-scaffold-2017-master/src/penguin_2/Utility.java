@@ -25,7 +25,7 @@ public strictfp class Utility {
     static boolean tryMoveToLocation(MapLocation loc) throws GameActionException{
     	RobotController rc = RobotPlayer.rc;
     	Direction dir = rc.getLocation().directionTo(loc);
-    	return tryMove(dir);
+    	return tryMove(dir, rc.getType().strideRadius);
     }
     
     static void tryMoveToLocationSlow(MapLocation loc, float speed) throws GameActionException{
@@ -63,7 +63,7 @@ public strictfp class Utility {
     	if (Math.abs(degreesToNorth)<90){
     		System.out.println("moving north vert");
     		if(Math.abs(diffY)<1){ //if diff greater than 1 (default stride)
-    			 tryMove(Direction.getNorth());
+    			 tryMove(Direction.getNorth(), rc.getType().strideRadius);
     		}else{ //diff less than 1
     			float remainY = Math.abs(diffY);
     			if(rc.canMove(Direction.getNorth(), remainY)){
@@ -74,7 +74,7 @@ public strictfp class Utility {
     	}else{ //we need to move south
     		System.out.println("moving south vert");
     		if(Math.abs(diffY)>1){ //if diff greater than 1 (default stride)
-    			tryMove(Direction.getSouth());
+    			tryMove(Direction.getSouth(), rc.getType().strideRadius);
     		}else{ //diff less than 1
     			float remainY = Math.abs(diffY);
     			if(rc.canMove(Direction.getSouth(), remainY)){
@@ -102,7 +102,7 @@ public strictfp class Utility {
     	//if need to move West
     	if (diffX>0){
     		if(Math.abs(diffX)>1){ //if diff greater than 1 (min stride)
-    			 tryMove(Direction.getWest());
+    			 tryMove(Direction.getWest(), rc.getType().strideRadius);
     		}else{ //diff less than 1
     			float remainX = Math.abs(diffX);
     			if(rc.canMove(Direction.getWest(), remainX)){
@@ -112,7 +112,7 @@ public strictfp class Utility {
     		
     	}else{ //we need to move south
     		if(Math.abs(diffX)>1){ //if diff greater than 1 (default stride)
-    			tryMove(Direction.getEast());
+    			tryMove(Direction.getEast(), rc.getType().strideRadius);
     		}else{ //diff less than 1
     			float remainX = Math.abs(diffX);
     			if(rc.canMove(Direction.getEast(), remainX)){
@@ -129,8 +129,8 @@ public strictfp class Utility {
      * @return true if a move was performed
      * @throws GameActionException
      */
-    static boolean tryMove(Direction dir) throws GameActionException {
-        return tryMove(dir,(float) 22.5,5);
+    static boolean tryMove(Direction dir, float speed) throws GameActionException {
+        return tryMove(dir,(float) 22.5,5, speed);
     }
 
     /**
@@ -142,7 +142,7 @@ public strictfp class Utility {
      * @return true if a move was performed
      * @throws GameActionException
      */
-    public static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
+    public static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide, float speed) throws GameActionException {
 
     	RobotController rc = RobotPlayer.rc;
     	

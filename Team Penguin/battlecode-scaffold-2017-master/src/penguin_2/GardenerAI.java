@@ -165,7 +165,7 @@ public strictfp class GardenerAI {
 		if(homeEdge!=0 && !homeEdgeFound){
 			if(homeEdge==1){ //headEast
 				//System.out.println("accidentally east");
-				if (Utility.tryMove(Direction.getEast(),15,5)){
+				if (Utility.tryMove(Direction.getEast(),15,5, rc.getType().strideRadius)){
 
 						//rc.move(Direction.getEast(), 1);
 				}else{
@@ -175,7 +175,7 @@ public strictfp class GardenerAI {
 				}
 			}else if(homeEdge==2){ //headNorth
 				//System.out.println("Trying North");
-				if (Utility.tryMove(Direction.getNorth(),15,5)){
+				if (Utility.tryMove(Direction.getNorth(),15,5, rc.getType().strideRadius)){
 					
 						//rc.move(Direction.getNorth(), 1);
 						System.out.println("headingNorth"); 
@@ -187,7 +187,7 @@ public strictfp class GardenerAI {
 				}
 			}else if(homeEdge==3){ //headWest
 				//System.out.println("accidentally west");
-				if (Utility.tryMove(Direction.getWest(),15,5)){
+				if (Utility.tryMove(Direction.getWest(),15,5, rc.getType().strideRadius)){
 				
 						//rc.move(Direction.getWest(), 1);
 				}else{
@@ -196,7 +196,7 @@ public strictfp class GardenerAI {
 				}
 			}else if(homeEdge==4){ //headSouth
 				System.out.println("checking south");
-				if (Utility.tryMove(Direction.getSouth(),15,5)){
+				if (Utility.tryMove(Direction.getSouth(),15,5, rc.getType().strideRadius)){
 					System.out.println("headingSouth"); 
 						//rc.move(Direction.getSouth(), 1);
 				}else{
