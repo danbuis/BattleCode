@@ -25,18 +25,15 @@
 	ENEMYARCHONX (102)
 	ENEMYARCHONY (103)
 	
+	NEUTRALTREEX (110)
+	NEUTRALTREEY (111)
+	
 	
 	TODO items
 	gardeners only spawn trees on even spaces
+	gardeners spawn units in variety of directions
 	archons determine map edges
-	lumberjacks shake tree
-	lumberjacks don't bob around when chopping trees
-	rebalance gardener maintenance spawning
-	randomize archon spawning in case of dense forests
-	
-	gardeners more likely to spawn lumberjack if neutral tree in sensing range
-	send spawned fighting units to approximate center of map
-	jitter when not other orders
+
 	
 	scout ai
 	completes 4 edge values
@@ -50,11 +47,7 @@
 	spotted enemy (5 - via scouts)
 	located neutral tree (3)
 	enemy archon (3 channels per, x y id)
-	
-	Fine tune initial spawning
-	-2 gardeners
-	-1 melee
-	
+
 	
 	
 	

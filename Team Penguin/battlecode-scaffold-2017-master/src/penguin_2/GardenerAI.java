@@ -23,6 +23,8 @@ public strictfp class GardenerAI {
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
             	
+            	Utility.checkForNearbyTrees();
+            	
             	//role call for census
             	if (rc.getRoundNum()%50==1){
             		int currentGardeners = rc.readBroadcast(2);

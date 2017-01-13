@@ -15,8 +15,9 @@ public class SoldierAI {
 
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
-                MapLocation myLocation = rc.getLocation();
-                
+            	
+            	Utility.checkForNearbyTrees();
+                 
                 // Move 
                 MoveAttackLoop.generalMovement();
 

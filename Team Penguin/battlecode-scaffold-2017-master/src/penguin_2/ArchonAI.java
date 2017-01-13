@@ -10,12 +10,15 @@ public strictfp class ArchonAI {
 	static void runArchon() throws GameActionException {
 		RobotController rc = RobotPlayer.rc;
         System.out.println("I'm an archon!");
+        System.out.println(Direction.getSouth().getAngleDegrees());
 
         // The code you want your robot to perform every round should be in this loop
         while (true) {
 
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
+            	
+            	Utility.checkForNearbyTrees();
             	
             	//move archon out of way of gardeners in case it is in the garden line
             	if (rc.getRoundNum()>=0 && rc.getRoundNum()<=5){
@@ -77,6 +80,20 @@ public strictfp class ArchonAI {
 	
 	private static boolean performGardenerHiringCheck(int currentGardeners) {
 		RobotController rc = RobotPlayer.rc;
+		
+		//first check that there aren't too many around
+		int nearbyGardenerLimit = 2;
+		int actualNearbyGardeners = 0;
+		
+		RobotInfo[] nearbyFriendlys = rc.senseNearbyRobots((float) 5.2, rc.getTeam());
+		for (RobotInfo info: nearbyFriendlys){
+			if (info.type==RobotType.GARDENER){
+				actualNearbyGardeners++;
+			}
+		}
+		
+		if(actualNearbyGardeners >= nearbyGardenerLimit) return false;
+		
 		int currentRound = rc.getRoundNum();
 		
 		if(currentRound < 300 && currentGardeners < 1){

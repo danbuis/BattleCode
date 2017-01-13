@@ -12,6 +12,11 @@ public strictfp class Utility {
         return new Direction((float)Math.random() * 2 * (float)Math.PI);
     }
     
+    static boolean moveRandom() throws GameActionException{
+    	RobotController rc = RobotPlayer.rc;
+    	return tryMove(randomDirection(),rc.getType().strideRadius);
+    }
+    
     static boolean tryMoveToLocation(int x, int y) throws GameActionException{
     	RobotController rc = RobotPlayer.rc;
     	MapLocation mapLoc = new MapLocation((x/1000), (y/1000));
@@ -170,12 +175,58 @@ public strictfp class Utility {
             currentCheck++;
         }
 
-        // A move never happened, so return false.
-        return false;
+        // A move never happened, so try a straight orthagonal move.
+        return tryOrthagonalMove(dir, speed);
        
     }
 
-    /**
+    private static boolean tryOrthagonalMove(Direction dir, float speed) throws GameActionException {
+		// TODO Auto-generated method stub
+    	RobotController rc = RobotPlayer.rc;
+    	float angle = dir.getAngleDegrees(); 
+    	
+    	if(angle>=0 && angle < 90){// try east
+    		if(rc.canMove(Direction.getEast())){
+    			rc.move(Direction.getEast());
+    			return true;
+    		}else if(rc.canMove(Direction.getNorth())){
+    			rc.move(Direction.getNorth());
+    			return true;
+    		}
+    		
+    	}else if(angle>=90 && angle <= 180){// try east
+    		if(rc.canMove(Direction.getWest())){
+    			rc.move(Direction.getWest());
+    			return true;
+    		}else if(rc.canMove(Direction.getNorth())){
+    			rc.move(Direction.getNorth());
+    			return true;
+    		}
+    		
+    	}else if(angle<0 && angle > -90){// try east
+    		if(rc.canMove(Direction.getEast())){
+    			rc.move(Direction.getEast());
+    			return true;
+    		}else if(rc.canMove(Direction.getSouth())){
+    			rc.move(Direction.getSouth());
+    			return true;
+    		}
+    		
+    	}else if(angle<=-90 && angle >= -180){// try east
+    		if(rc.canMove(Direction.getWest())){
+    			rc.move(Direction.getWest());
+    			return true;
+    		}else if(rc.canMove(Direction.getSouth())){
+    			rc.move(Direction.getSouth());
+    			return true;
+    		}
+    		
+    	}
+    	
+		return false;
+	}
+
+	/**
      * A slightly more complicated example function, this returns true if the given bullet is on a collision
      * course with the current robot. Doesn't take into account objects between the bullet and this robot.
      *
@@ -240,6 +291,28 @@ public strictfp class Utility {
 	
 	public static MapLocation getLocationWithDistanceFromTarget(Direction directionToTarget, MapLocation targetLocation, float desiredDistance){
 		return targetLocation.subtract(directionToTarget,desiredDistance);
+	}
+	
+	public static void checkForNearbyTrees() throws GameActionException {
+		RobotController rc = RobotPlayer.rc;
+		 //is there a nearby tree to send to lumberjacks?
+  		//first check the channel
+    System.out.println("checking for nearby trees - outside if");
+  		if(rc.readBroadcast(110)==0){ //its free
+  			//check for neutral trees
+  			System.out.println("sensing trees....");
+  			TreeInfo[] treeInfo = rc.senseNearbyTrees(-1, Team.NEUTRAL);
+  			//we found one!
+  			System.out.println(treeInfo.length+" trees found");
+  			if(treeInfo.length!=0){
+  				System.out.println("Broadcasing the first one");
+  				rc.broadcast(110, (int)(treeInfo[0].location.x*1000));
+  				rc.broadcast(111, (int)(treeInfo[0].location.y*1000));
+  				
+  				System.out.println("X: "+treeInfo[0].location.x);
+  				System.out.println("Y: "+treeInfo[0].location.y);
+  			}
+  		}
 	}
 
 }

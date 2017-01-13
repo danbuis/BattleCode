@@ -21,6 +21,7 @@ public class MoveAttackLoop {
 	static MapLocation targetPoint;
 	
 	static boolean receivedNewTargetLocation = false;
+	static boolean arrivedNewTargetLocation = false;
 	
 	/**
 	 * provides general movement structure for all combat units
@@ -59,7 +60,7 @@ public class MoveAttackLoop {
 		//if not recieved new target, move to rally point
 		if(!receivedNewTargetLocation && rallyPoint.x>(-1)){
 			System.out.println("moving to rally point... or maybe around it...");
-			generalMove(rallyPoint);
+			generalMoveToLoc(rallyPoint);
 		}
 		
 
@@ -68,10 +69,10 @@ public class MoveAttackLoop {
 			System.out.println("recieved new target point");
 			receivedNewTargetLocation = true;
 			targetPoint = expectedEnemyCenter;
-			generalMove(targetPoint);
+			generalMoveToLoc(targetPoint);
 			
 		}else if (receivedNewTargetLocation){ //only if you've been rallied and given a place to go
-			generalMove(targetPoint);
+			generalMoveToLoc(targetPoint);
 		}
 		
 		
@@ -83,11 +84,12 @@ public class MoveAttackLoop {
 	 * @throws GameActionException 
 	 */
 	
-	private static void generalMove(MapLocation targetLocation) throws GameActionException {
+	private static void generalMoveToLoc(MapLocation targetLocation) throws GameActionException {
 		RobotController rc = RobotPlayer.rc;
 		
 		//If nearby target, move accordingly
 		RobotInfo[] enemyRobots = Utility.checkForEnemyRobots();
+		System.out.println("in general move");
 		
 		if(enemyRobots.length!=0){
 			if (rc.getType()==RobotType.SOLDIER){
@@ -95,13 +97,44 @@ public class MoveAttackLoop {
 			}
 		}
 		
-		//If target in correct quadrant, move accordingly
+		//If target in correct quadrant, move accordingly, resetting any targetlocation info
 		//in emergency, move accordingly
 		//else
 		
-		else{
-			Utility.tryMoveToLocation(targetLocation, rc.getType().strideRadius);
+		
+
+		else if (targetLocation!=null){
+			Utility.tryMoveToLocation(targetLocation, Math.min(rc.getType().strideRadius, Utility.distanceBetweenMapLocations(targetLocation, rc.getLocation())));
+			
+			float distToTargetLoc = Utility.distanceBetweenMapLocations(targetLocation, rc.getLocation());
+			 
+			//close enough to have arrived, reset targetPoint (big scope)
+			if(distToTargetLoc <4 ){
+				targetPoint = null;
+			}
+			
+		}else{
+			Utility.moveRandom();
 		}
+	}
+	
+	public static void generalAttack(){
+		
+		RobotController rc = RobotPlayer.rc;
+		
+		//Info nearby targets
+		RobotInfo[] enemyRobots = Utility.checkForEnemyRobots();
+		
+		
+		//there are enemy robots around
+		if(enemyRobots.length!=0){
+			
+		}else if(rc.getType()==RobotType.LUMBERJACK){ //Are there non-friendly trees instead?
+			TreeInfo[] nearbyTreesNeutral=nearbyTreesNeutral = rc.senseNearbyTrees(-1, rc.getTeam().opponent());
+			
+		}
+		
+		
 		
 	}
 
