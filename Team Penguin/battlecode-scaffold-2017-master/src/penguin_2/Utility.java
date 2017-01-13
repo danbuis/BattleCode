@@ -13,8 +13,9 @@ public strictfp class Utility {
     }
     
     static boolean tryMoveToLocation(int x, int y) throws GameActionException{
+    	RobotController rc = RobotPlayer.rc;
     	MapLocation mapLoc = new MapLocation((x/1000), (y/1000));
-    	return tryMoveToLocation(mapLoc);
+    	return tryMoveToLocation(mapLoc, rc.getType().strideRadius);
     }
     
     /**Moves toward a given MapLocation
@@ -22,18 +23,12 @@ public strictfp class Utility {
      * 
      */
     
-    static boolean tryMoveToLocation(MapLocation loc) throws GameActionException{
-    	RobotController rc = RobotPlayer.rc;
-    	Direction dir = rc.getLocation().directionTo(loc);
-    	return tryMove(dir, rc.getType().strideRadius);
-    }
+ 
     
-    static void tryMoveToLocationSlow(MapLocation loc, float speed) throws GameActionException{
+    static boolean tryMoveToLocation(MapLocation loc, float speed) throws GameActionException{
     	RobotController rc = RobotPlayer.rc;
     	Direction dir = rc.getLocation().directionTo(loc);
-    	if (rc.canMove(dir, speed)){
-    		rc.move(dir,speed);
-    	}
+    	return tryMove(dir,speed);
     }
 
     /**
@@ -173,6 +168,7 @@ public strictfp class Utility {
 
         // A move never happened, so return false.
         return false;
+       
     }
 
     /**
@@ -236,6 +232,10 @@ public strictfp class Utility {
 		RobotInfo[] info = rc.senseNearbyRobots(-1, enemy);
 		
 		return info;
+	}
+	
+	public static MapLocation getLocationWithDistanceFromTarget(Direction directionToTarget, MapLocation targetLocation, float desiredDistance){
+		return targetLocation.subtract(directionToTarget,desiredDistance);
 	}
 
 }

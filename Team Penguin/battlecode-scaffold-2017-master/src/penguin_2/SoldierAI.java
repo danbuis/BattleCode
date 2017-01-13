@@ -44,12 +44,12 @@ public class SoldierAI {
         }
     }
 
-	public static void moveAroundHostiles(RobotInfo[] enemyRobots) {
-		// TODO Auto-generated method stub
+	public static void moveAroundHostiles(RobotInfo[] enemyRobots) throws GameActionException {
+		
 		RobotController rc = RobotPlayer.rc;
 		RobotInfo closestRobot = null;
 		float closestDist = 90;
-		Direction dirToEnemy;
+		Direction dirToEnemy = Direction.getNorth();
 		
 		
 		//find the closest
@@ -64,7 +64,11 @@ public class SoldierAI {
 			dirToEnemy = rc.getLocation().directionTo(closestRobot.location);
 		}
 		
+		MapLocation targetLocation = Utility.getLocationWithDistanceFromTarget(dirToEnemy, closestRobot.location, 5);
 		
+		float distToTargetLocation = Utility.distanceBetweenMapLocations(rc.getLocation(), targetLocation);
+		
+		Utility.tryMoveToLocation(targetLocation, Math.min(distToTargetLocation, rc.getType().strideRadius));
 	
 	}
 

@@ -100,7 +100,7 @@ public class MoveAttackLoop {
 		//else
 		
 		else{
-			Utility.tryMoveToLocation(targetLocation);
+			Utility.tryMoveToLocation(targetLocation, rc.getType().strideRadius);
 		}
 		
 	}
