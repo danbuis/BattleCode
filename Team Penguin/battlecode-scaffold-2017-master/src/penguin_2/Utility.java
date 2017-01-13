@@ -37,7 +37,7 @@ public strictfp class Utility {
      * @return
      * @throws GameActionException 
      */
-    static void tryMoveVertical(float targetY) throws GameActionException{
+    static  void tryMoveVertical(float targetY) throws GameActionException{
     	RobotController rc = RobotPlayer.rc;
     	float currentY = rc.getLocation().y ;
     	float diffY = currentY-targetY;
@@ -57,9 +57,11 @@ public strictfp class Utility {
     	//if need to move North
     	if (Math.abs(degreesToNorth)<90){
     		System.out.println("moving north vert");
-    		if(Math.abs(diffY)<1){ //if diff greater than 1 (default stride)
+    		if(Math.abs(diffY)>1){ //if diff greater than 1 (default stride)
+    			System.out.println("attempting full stride");
     			 tryMove(Direction.getNorth(), rc.getType().strideRadius);
     		}else{ //diff less than 1
+    			System.out.println("attempting partial stride");
     			float remainY = Math.abs(diffY);
     			if(rc.canMove(Direction.getNorth(), remainY)){
     				rc.move(Direction.getNorth(), remainY);
@@ -69,8 +71,10 @@ public strictfp class Utility {
     	}else{ //we need to move south
     		System.out.println("moving south vert");
     		if(Math.abs(diffY)>1){ //if diff greater than 1 (default stride)
+    			System.out.println("attempting full stride");
     			tryMove(Direction.getSouth(), rc.getType().strideRadius);
     		}else{ //diff less than 1
+    			System.out.println("attempting partial stride");
     			float remainY = Math.abs(diffY);
     			if(rc.canMove(Direction.getSouth(), remainY)){
     				rc.move(Direction.getSouth(), remainY);
