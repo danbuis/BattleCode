@@ -174,6 +174,13 @@ public strictfp class Utility {
             // No move performed, try slightly further
             currentCheck++;
         }
+        
+        //shoot closest Neutral Tree
+        
+        TreeInfo targetTree = findClosestTree(Team.NEUTRAL);
+        if(rc.getType()==RobotType.SOLDIER){
+        	rc.firePentadShot(rc.getLocation().directionTo(targetTree.location));
+        }
 
         // A move never happened, so try a straight orthagonal move.
         return tryOrthagonalMove(dir, speed);
@@ -184,6 +191,10 @@ public strictfp class Utility {
 		// TODO Auto-generated method stub
     	RobotController rc = RobotPlayer.rc;
     	float angle = dir.getAngleDegrees(); 
+    	
+    	if(rc.getType()==RobotType.GARDENER){
+    		return false;
+    	}
     	
     	if(angle>=0 && angle < 90){// try east
     		if(rc.canMove(Direction.getEast())){
@@ -313,6 +324,26 @@ public strictfp class Utility {
   				System.out.println("Y: "+treeInfo[0].location.y);
   			}
   		}
+	}
+	
+	public static TreeInfo findClosestTree(Team team){
+		RobotController rc = RobotPlayer.rc;
+		TreeInfo[] info = rc.senseNearbyTrees(-1, team);
+		
+		float distance=1000;
+		
+		if (info.length==0){
+			return null;
+		}
+		TreeInfo returnTree = info[0];
+		
+		for(TreeInfo tree: info){
+			if(distanceBetweenMapLocations(tree.location,rc.getLocation())<distance){
+				returnTree = tree;
+			}
+		}
+		
+		return returnTree;
 	}
 
 }

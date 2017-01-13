@@ -24,14 +24,32 @@ public class SoldierAI {
                 // See if there are any nearby enemy robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
 
-                // If there are some...
-                if (robots.length > 0) {
-                    // And we have enough bullets, and haven't attacked yet this turn...
-                    if (rc.canFireSingleShot()) {
-                        // ...Then fire a bullet in the direction of the enemy.
-                        rc.fireSingleShot(rc.getLocation().directionTo(robots[0].location));
-                    }
+                RobotInfo robotToAttack;
+                //Decide what to fire at
+                if(robots.length!=0){
+                	robotToAttack = selectTarget(robots);
+                	float range = Utility.distanceBetweenMapLocations(rc.getLocation(), robotToAttack.location);
+                	
+                	//how much to fire
+                	if(robotToAttack.type==RobotType.ARCHON || robotToAttack.type == RobotType.GARDENER){
+                		if(rc.canFirePentadShot()){
+                			rc.firePentadShot(rc.getLocation().directionTo(robotToAttack.location));
+                		}
+                	}else if (range<4){
+                		if(rc.canFireTriadShot()&& rc.getTeamBullets()>310){
+                			rc.fireTriadShot(rc.getLocation().directionTo(robotToAttack.location));
+                		}
+                	} else if (range<2.5){
+                		if(rc.canFireTriadShot()){
+                			rc.fireTriadShot(rc.getLocation().directionTo(robotToAttack.location));
+                		}
+                	}else{
+                		if(rc.canFireSingleShot()){
+                			rc.fireSingleShot(rc.getLocation().directionTo(robotToAttack.location));
+                		}
+                	}
                 }
+                
 
 
 
@@ -44,6 +62,27 @@ public class SoldierAI {
             }
         }
     }
+
+	private static RobotInfo selectTarget(RobotInfo[] robots) {
+		RobotController rc = RobotPlayer.rc;
+		RobotInfo targetRobot = robots[0];
+		float distance = 1000;
+		
+		for(RobotInfo info: robots){
+			if(info.type==RobotType.ARCHON || info.type==RobotType.GARDENER){
+				targetRobot = info;
+				break;
+			}else{
+				float checkDist = Utility.distanceBetweenMapLocations(info.location, rc.getLocation());
+				if(checkDist<distance){
+					distance = checkDist;
+					targetRobot = info;
+				}
+			}
+		}
+		return targetRobot;
+		
+	}
 
 	public static void moveAroundHostiles(RobotInfo[] enemyRobots) throws GameActionException {
 		

@@ -255,11 +255,12 @@ public strictfp class GardenerAI {
 		Boolean buildLumberjack=false;
 		int roundNumber = rc.getRoundNum();
 		
-		TreeInfo[] nearTrees = rc.senseNearbyTrees();
+		TreeInfo[] nearTrees = rc.senseNearbyTrees(5);
 		boolean isNearNeutralTree = false;
 		
 		for(TreeInfo info:nearTrees){
 			if(info.team.equals(Team.NEUTRAL)){
+				
 				isNearNeutralTree = true;
 				break;
 			}
@@ -279,15 +280,15 @@ public strictfp class GardenerAI {
 		//plant a tree using a class level variable to try to plant a tree later
         if (!plantTree && Math.random()<0.1 && roundNumber<150){
         	plantTree=true;
-        }else if (Math.random()<0.03){
+        }else if (Math.random()<0.02){
         	plantTree=true;
         }
         System.out.println("After tree check"+plantTree);
         
        //Attempt unit builds
-        if(Math.random()<0.02){
+        if(Math.random()<0.02|| isNearEnemyRobot){
         	buildSoldier=true;
-        }else if (Math.random() < 0.008 || isNearNeutralTree || isNearEnemyRobot){
+        }else if (Math.random() < 0.008 || isNearNeutralTree){
         	buildLumberjack = true;
         }
         
