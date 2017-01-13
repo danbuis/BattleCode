@@ -228,5 +228,14 @@ public strictfp class Utility {
     	return (float) Math.sqrt(totalSquared);
     	
     }
+    
+	
+	public static RobotInfo[] checkForEnemyRobots(){
+		RobotController rc = RobotPlayer.rc;
+		Team enemy = rc.getTeam().opponent();
+		RobotInfo[] info = rc.senseNearbyRobots(-1, enemy);
+		
+		return info;
+	}
 
 }

@@ -44,4 +44,9 @@ public class SoldierAI {
         }
     }
 
+	public static void moveAroundHostiles(RobotInfo[] enemyRobots) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

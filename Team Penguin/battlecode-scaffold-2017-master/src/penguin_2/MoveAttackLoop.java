@@ -49,7 +49,7 @@ public class MoveAttackLoop {
 			System.out.println("not close to rally point yet: "+distanceToRally);
 			
 			//close enough to count as reaching it
-			if(distanceToRally<3){
+			if(distanceToRally<6){
 				System.out.println("At rally point");
 				arrivedAtRallyPoint=true;
 			}
@@ -84,30 +84,21 @@ public class MoveAttackLoop {
 	 */
 	
 	private static void generalMove(MapLocation targetLocation) throws GameActionException {
-		
+		RobotController rc = RobotPlayer.rc;
 		
 		//If nearby target, move accordingly
+		RobotInfo[] enemyRobots = Utility.checkForEnemyRobots();
+		if(enemyRobots.length!=0){
+			if (rc.getType()==RobotType.SOLDIER){
+				SoldierAI.moveAroundHostiles(enemyRobots);
+			}
+		}
+		
 		//If target in correct quadrant, move accordingly
 		//in emergency, move accordingly
 		//else
 		
-		Utility.tryMoveToLocation(targetLocation);
-		
-	}
-
-	
-	//TODO not done!!!
-	public static RobotInfo[] checkForEnemyRobots(){
-		RobotController rc = RobotPlayer.rc;
-		RobotInfo[] info = rc.senseNearbyRobots();
-		
-		RobotInfo[] enemyRobots = new RobotInfo[info.length];
-		
-		
-		
-		return enemyRobots;
-		
-		
+		Utility.tryMoveToLocationSlow(targetLocation,1);
 		
 	}
 
