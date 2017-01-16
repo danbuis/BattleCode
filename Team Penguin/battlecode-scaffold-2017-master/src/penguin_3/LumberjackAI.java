@@ -27,17 +27,17 @@ public strictfp class LumberjackAI {
             	if(targetNeutralTree == null){
             		//if not, try to read one in
             		System.out.println("nope, let's get one");
-            		if(rc.readBroadcast(110)!=0){
+            		if(rc.readBroadcast(Channels.NEUTRALTREEX)!=0){
             			//we have one stored globally
-            			float targetTreeX = rc.readBroadcast(110)/1000;
-            			float targetTreeY = rc.readBroadcast(111)/1000;
+            			float targetTreeX = rc.readBroadcast(Channels.NEUTRALTREEX)/1000;
+            			float targetTreeY = rc.readBroadcast(Channels.NEUTRALTREEY)/1000;
             			
             			System.out.println(targetTreeX+" , "+targetTreeY);
             			targetNeutralTree = new MapLocation(targetTreeX, targetTreeY);
             			
             			//reset channels
-            			rc.broadcast(110, 0);
-            			rc.broadcast(111, 0);
+            			rc.broadcast(Channels.NEUTRALTREEX, 0);
+            			rc.broadcast(Channels.NEUTRALTREEY, 0);
             		}
             	}else{
             		//decrement timer

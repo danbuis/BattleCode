@@ -13,7 +13,7 @@ public class TankAI {
 	static void runTank() throws GameActionException {
     	RobotController rc = RobotPlayer.rc;
     	
-        System.out.println("I'm an soldier!");
+        System.out.println("I'm a tank!");
         Team enemy = rc.getTeam().opponent();
 
         // The code you want your robot to perform every round should be in this loop
@@ -63,7 +63,7 @@ public class TankAI {
                 Clock.yield();
 
             } catch (Exception e) {
-                System.out.println("Soldier Exception");
+                System.out.println("Tank Exception");
                 e.printStackTrace();
             }
         }

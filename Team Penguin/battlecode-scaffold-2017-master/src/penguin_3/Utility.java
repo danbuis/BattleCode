@@ -309,7 +309,7 @@ public strictfp class Utility {
 		 //is there a nearby tree to send to lumberjacks?
   		//first check the channel
     System.out.println("checking for nearby trees - outside if");
-  		if(rc.readBroadcast(110)==0){ //its free
+  		if(rc.readBroadcast(Channels.NEUTRALTREEX)==0){ //its free
   			//check for neutral trees
   			System.out.println("sensing trees....");
   			TreeInfo[] treeInfo = rc.senseNearbyTrees(-1, Team.NEUTRAL);
@@ -317,8 +317,8 @@ public strictfp class Utility {
   			System.out.println(treeInfo.length+" trees found");
   			if(treeInfo.length!=0){
   				System.out.println("Broadcasing the first one");
-  				rc.broadcast(110, (int)(treeInfo[0].location.x*1000));
-  				rc.broadcast(111, (int)(treeInfo[0].location.y*1000));
+  				rc.broadcast(Channels.NEUTRALTREEX, (int)(treeInfo[0].location.x*1000));
+  				rc.broadcast(Channels.NEUTRALTREEY, (int)(treeInfo[0].location.y*1000));
   				
   				System.out.println("X: "+treeInfo[0].location.x);
   				System.out.println("Y: "+treeInfo[0].location.y);

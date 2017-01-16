@@ -5,6 +5,7 @@ import battlecode.common.*;
 public strictfp class ArchonAI {
 	
 	static int hiredGardeners=0;
+	static int timeSinceLastGardener = 150;
 	
 	
 	static void runArchon() throws GameActionException {
@@ -20,7 +21,6 @@ public strictfp class ArchonAI {
             	
             	Utility.checkForNearbyTrees();
             	
-
             	
             	//if 500+ bullets, donate
             	if(rc.getTeamBullets()>700){
@@ -28,14 +28,14 @@ public strictfp class ArchonAI {
             	}
             	
             	//if turn 0 and no other archon has selected a home side
-            	if (rc.getRoundNum()== 1 && rc.readBroadcast(0)==0){
+            	if (rc.getRoundNum()== 1 && rc.readBroadcast(Channels.HOMESIDE)==0){
             		//System.out.println("about to call selection method");
             		selectHomeSide();
             	}
             	
             	//move archon away from map center
             	if (rc.getRoundNum()>=0 && rc.getRoundNum()<=100){
-            		MapLocation mapCenter = new MapLocation((float)(rc.readBroadcast(100)/1000), (float)(rc.readBroadcast(101)/1000));
+            		MapLocation mapCenter = new MapLocation((float)(rc.readBroadcast(Channels.RELATIVECENTERX)/1000), (float)(rc.readBroadcast(Channels.RELATIVECENTERY)/1000));
             		Direction directionToCenter = rc.getLocation().directionTo(mapCenter);
             		
             		Utility.tryMove(directionToCenter.opposite(), rc.getType().strideRadius);
@@ -48,8 +48,8 @@ public strictfp class ArchonAI {
             	}
 
             	//Hire gardeners
-                int currentGardeners = rc.readBroadcast(2);
-                if (rc.getRoundNum()%50!=0 && rc.getRoundNum()%50!=1){
+                int currentGardeners = rc.readBroadcast(Channels.CURRENTGARDENERS);
+                if (rc.getRoundNum()%50!=0 && rc.getRoundNum()%50!=1 && timeSinceLastGardener>110){
                 	if (performGardenerHiringCheck(currentGardeners)){
                 		boolean placedGardener = false;
                 		int trys = 0;
@@ -59,12 +59,15 @@ public strictfp class ArchonAI {
                 			if(rc.canHireGardener(tryDir)){
                 				rc.hireGardener(tryDir);
                 				placedGardener=true;
+                				timeSinceLastGardener = 0;
                 			}
                 			directionToTry++;
                 			trys++;
                 		}
                 	}
                 		
+                }else{
+                	timeSinceLastGardener++;
                 }
                 
 //TODO smarter movement
@@ -118,7 +121,7 @@ public strictfp class ArchonAI {
 		System.out.println("Archon : Census time");
 		//set channel 2 (#gardners) to 0;
 		try {
-			rc.broadcast(2, 0);
+			rc.broadcast(Channels.CURRENTGARDENERS, 0);
 		} catch (GameActionException e) {
 			// Auto-generated catch block
 			e.printStackTrace();
@@ -165,7 +168,7 @@ public strictfp class ArchonAI {
 		
 		//piggyback these values to determine map symmetry
 				try {
-					if(rc.readBroadcast(20)==0){
+					if(rc.readBroadcast(Channels.SYMMETRY)==0){
 						determineMapInfo(totalFriendlyX, totalFriendlyY, totalEnemyX, totalEnemyY, friendlyarchons.length);
 					}
 				} catch (GameActionException e1) {
@@ -189,7 +192,7 @@ public strictfp class ArchonAI {
 			if (horizontalDifference>=0){  //then I am further east
 				try {
 					System.out.println("selecting east");
-					rc.broadcast(0, 1);
+					rc.broadcast(Channels.HOMESIDE, 1);
 					System.out.println("broadcasting east");
 					//System.out.println("east");
 				} catch (GameActionException e) {
@@ -198,7 +201,7 @@ public strictfp class ArchonAI {
 			} else{
 				System.out.println("selecting west");
 				try {
-					rc.broadcast(0, 3);
+					rc.broadcast(Channels.HOMESIDE, 3);
 					System.out.println("broadcasting west");
 					//System.out.println("west");
 				} catch (GameActionException e) {
@@ -222,7 +225,7 @@ public strictfp class ArchonAI {
 			if (Math.abs(degreesToNorth)<90){ //than I am further south
 				try {
 					System.out.println("selecting south");
-					rc.broadcast(0, 4);
+					rc.broadcast(Channels.HOMESIDE, 4);
 					//System.out.println("south");
 				} catch (GameActionException e) {
 					//Auto-generated catch block
@@ -231,7 +234,7 @@ public strictfp class ArchonAI {
 			}else{
 				try {
 					System.out.println("selecting north");
-					rc.broadcast(0, 2);
+					rc.broadcast(Channels.HOMESIDE, 2);
 					//System.out.println("north");
 				} catch (GameActionException e) {
 					//Auto-generated catch block
@@ -258,28 +261,28 @@ public strictfp class ArchonAI {
 			float totalEnemyY, int numberOfArchons) throws GameActionException {
 		RobotController rc = RobotPlayer.rc;
 		if(totalFriendlyX==totalEnemyX || totalFriendlyY==totalEnemyY){
-			rc.broadcast(20, 1);
+			rc.broadcast(Channels.SYMMETRY, 1);
 			System.out.println("Mirror Symmetry");
 			System.out.println("friendlyX:"+totalFriendlyX);
 			System.out.println("friendlyY:"+totalFriendlyY);
 			System.out.println("enemyX:"+totalEnemyX);
 			System.out.println("enemyY:"+totalEnemyY);
 		}else{
-			rc.broadcast(20,2);
+			rc.broadcast(Channels.SYMMETRY,2);
 			System.out.println("Rotation Symmetry");
 		}
 		
-		rc.broadcast(21, -1);
-		rc.broadcast(22, -1);
-		rc.broadcast(23, -1);
-		rc.broadcast(24, -1);
+		rc.broadcast(Channels.EASTEDGE, -1);
+		rc.broadcast(Channels.NORTHEDGE, -1);
+		rc.broadcast(Channels.WESTEDGE, -1);
+		rc.broadcast(Channels.SOUTHEDGE, -1);
 		
 		//determine relative center of map
 		float relativeCenterX = (totalFriendlyX+totalEnemyX)/(2*numberOfArchons);
 		float relativeCenterY = (totalFriendlyY+totalEnemyY)/(2*numberOfArchons);
 		
-		rc.broadcast(100, (int)(relativeCenterX*1000));
-		rc.broadcast(101, (int)(relativeCenterY*1000));
+		rc.broadcast(Channels.RELATIVECENTERX, (int)(relativeCenterX*1000));
+		rc.broadcast(Channels.RELATIVECENTERY, (int)(relativeCenterY*1000));
 		
 		System.out.println("relative centerX :"+relativeCenterX);
 		System.out.println("relative centerX :"+relativeCenterY);
@@ -288,8 +291,8 @@ public strictfp class ArchonAI {
 		float enemyCenterX = totalEnemyX/numberOfArchons;
 		float enemyCenterY = totalEnemyY/numberOfArchons;
 		
-		rc.broadcast(102, (int)(enemyCenterX*1000));
-		rc.broadcast(103, (int)(enemyCenterY*1000));
+		rc.broadcast(Channels.ENEMYARCHONX, (int)(enemyCenterX*1000));
+		rc.broadcast(Channels.ENEMYARCHONY, (int)(enemyCenterY*1000));
 		
 	}
 

@@ -34,12 +34,12 @@ public class MoveAttackLoop {
 		System.out.println("first check: " + (rallyPoint.x<1));
 		//check to see if we have the rally point stored
 		if(rallyPoint.x<0){
-			rallyPoint = new MapLocation((float) (rc.readBroadcast(100)/1000.0), (float)(rc.readBroadcast(101)/1000.0));
+			rallyPoint = new MapLocation((float) (rc.readBroadcast(Channels.RELATIVECENTERX)/1000.0), (float)(rc.readBroadcast(Channels.RELATIVECENTERY)/1000.0));
 			System.out.println("setting rally point");
 		}
 		
 		if(expectedEnemyCenter.x<0){
-			expectedEnemyCenter = new MapLocation((float) (rc.readBroadcast(102)/1000), (float)(rc.readBroadcast(103)/1000));
+			expectedEnemyCenter = new MapLocation((float) (rc.readBroadcast(Channels.ENEMYARCHONX)/1000), (float)(rc.readBroadcast(Channels.ENEMYARCHONY)/1000));
 		}
 		
 		

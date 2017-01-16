@@ -48,16 +48,16 @@ public strictfp class GardenerAI {
             	
             	//role call for census
             	if (rc.getRoundNum()%50==1){
-            		int currentGardeners = rc.readBroadcast(2);
+            		int currentGardeners = rc.readBroadcast(Channels.CURRENTGARDENERS);
             		currentGardeners++;
-            		rc.broadcast(2, currentGardeners);
+            		rc.broadcast(Channels.CURRENTGARDENERS, currentGardeners);
             		//System.out.println("Here: "+currentGardeners);
             	}
             	
             	//determine homeEdge, and by extension which slot to leave open
             	
             	if (homeEdge==0){
-            		int edge=rc.readBroadcast(0);
+            		int edge=rc.readBroadcast(Channels.HOMESIDE);
             		if(edge!=0){
             			homeEdge = edge;
             		}
@@ -139,7 +139,7 @@ public strictfp class GardenerAI {
             		//Decide what to build
             		//if there is a tree nearby, build a lumberjack
             		TreeInfo[] trees = rc.senseNearbyTrees(-1, Team.NEUTRAL);
-            		if(trees.length!=0 && lumberjacksBuilt>4){
+            		if(trees.length!=0){
             			tryToBuildUnit(RobotType.LUMBERJACK);
             		}
             		if(rc.getTeamBullets()>300){
@@ -169,19 +169,28 @@ public strictfp class GardenerAI {
 	private static boolean tryToBuildUnit(RobotType robotType) throws GameActionException {
 		RobotController rc = RobotPlayer.rc;
 		
-		if(rc.canBuildRobot(robotType, northwestDir)){
-			rc.buildRobot(robotType, northwestDir);
-			if(robotType == RobotType.LUMBERJACK){
-				lumberjacksBuilt++;
+		float initialDir = northwestDir.radians;
+		
+		if(placeSouthEast){
+			initialDir = southeastDir.radians;
+		}
+		
+		boolean built= false;
+		int count =0;
+		while(count<50){
+			Direction tryDir =new Direction (initialDir);
+			if(rc.canBuildRobot(robotType, tryDir)){
+				rc.buildRobot(robotType, tryDir);
+				built=true;
+				count+=70;
+			}else{
+				initialDir++;
 			}
-			return true;
-		}else if(rc.canBuildRobot(robotType, southeastDir)){
-			rc.buildRobot(robotType, southeastDir);
-			if(robotType == RobotType.LUMBERJACK){
-				lumberjacksBuilt++;
-			}
-			return true;
-		}else return false;
+			
+			count++;
+		}
+		
+		return built;
 		
 	}
 }
