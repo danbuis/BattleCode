@@ -13,6 +13,10 @@ public class Channels {
 	public static int CURRENTTANKS=5;
 	public static int CURRENTSCOUTS=6;
 	
+	public static int FIRSTSOLDIER=10;
+	public static int FIRSTSCOUT=11;
+	public static int FIRSTPLANT=12;
+	
 	
 	//map Info
 	public static int SYMMETRY=20;//1 = mirror, 2 = rotation
@@ -33,10 +37,16 @@ public class Channels {
 	
 	public static int NEUTRALTREEX =110;
 	public static int NEUTRALTREEY = 111;
+	public static int BACKUPTREEX = 112;
+	public static int BACKUPTREEY = 113;
 	
 	public static int BESTGARDENERVALUE = 200;
 	public static int BESTGARDENERX = 201;
 	public static int BESTGARDENERY = 202;
+	public static int SECONDBESTX=203;
+	public static int SECONDBESTY=204;
+	public static int BLACKLISTX= 210;
+	public static int BLACKLISTY=211;
 	
 	public static int ULSPOTTEDENEMYX = 400;
 	public static int ULSPOTTEDENEMYY = 401;

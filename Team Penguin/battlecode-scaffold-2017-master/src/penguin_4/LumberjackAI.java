@@ -38,6 +38,20 @@ public strictfp class LumberjackAI {
             			//reset channels
             			rc.broadcast(Channels.NEUTRALTREEX, 0);
             			rc.broadcast(Channels.NEUTRALTREEY, 0);
+            		}else{
+            			/*if(rc.readBroadcast(Channels.BACKUPTREEX!=0)){
+            				//we have one stored globally
+                			float targetTreeX = rc.readBroadcast(Channels.BACKUPTREEX)/1000;
+                			float targetTreeY = rc.readBroadcast(Channels.BACKUPTREEY)/1000;
+                			
+                			System.out.println(targetTreeX+" , "+targetTreeY);
+                			targetNeutralTree = new MapLocation(targetTreeX, targetTreeY);
+                			
+                			//reset channels
+                			rc.broadcast(Channels.BACKUPTREEX, 0);
+                			rc.broadcast(Channels.BACKUPTREEY, 0);
+            				
+            			}*/
             		}
             	}else{
             		//decrement timer
@@ -83,7 +97,14 @@ public strictfp class LumberjackAI {
 				targetNeutralTree=null;
 				treeCountDown=130;
 			}else{
-				attackNeutralTree();
+				RobotInfo[] robotsNearTarget= rc.senseNearbyRobots(targetNeutralTree, 0.001F, rc.getTeam());
+				if(robotsNearTarget.length!=0){
+					targetNeutralTree=null;
+					treeCountDown=130;
+				}else{
+				
+					attackNeutralTree();
+				}
 			}
 		}
 	

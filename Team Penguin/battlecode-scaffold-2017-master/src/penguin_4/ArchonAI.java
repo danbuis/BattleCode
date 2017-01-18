@@ -23,7 +23,9 @@ public strictfp class ArchonAI {
             		//reset best value
             		rc.broadcast(Channels.BESTGARDENERVALUE, 99999999);
             		//search for local best
-            		GardenSpotAnalyzer.localBest();
+            		if(rc.readBroadcast(Channels.FIRSTPLANT)==0){
+            			GardenSpotAnalyzer.localBest();
+            		}
             	}
             	
             	Utility.checkForNearbyTrees();
@@ -56,7 +58,7 @@ public strictfp class ArchonAI {
 
             	//Hire gardeners
                 int currentGardeners = rc.readBroadcast(Channels.CURRENTGARDENERS);
-                if (rc.getRoundNum()%50!=0 && rc.getRoundNum()%50!=1 && timeSinceLastGardener>110){
+                if (rc.getRoundNum()%50!=0 && rc.getRoundNum()%50!=1 && timeSinceLastGardener>110 && rc.getTeamBullets()>110){
                 	if (performGardenerHiringCheck(currentGardeners)){
                 		boolean placedGardener = false;
                 		int trys = 0;

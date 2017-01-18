@@ -19,6 +19,7 @@ public class MoveAttackLoop {
 	static MapLocation rallyPoint = new MapLocation(-1,-1);
 	static MapLocation expectedEnemyCenter = new MapLocation(-1, -1);
 	static MapLocation expectedFriendlyCenter = new MapLocation(-1,-1);
+	static MapLocation centerPoint = new MapLocation(-1,-1);
 	static MapLocation targetPoint;
 	
 	static boolean receivedNewTargetLocation = false;
@@ -35,7 +36,7 @@ public class MoveAttackLoop {
 		System.out.println("first check: " + (rallyPoint.x<1));
 		//check to see if we have the rally point stored
 		if(rallyPoint.x<0){
-			MapLocation centerPoint = new MapLocation((float) (rc.readBroadcast(Channels.RELATIVECENTERX)/1000.0), (float)(rc.readBroadcast(Channels.RELATIVECENTERY)/1000.0));
+			centerPoint = new MapLocation((float) (rc.readBroadcast(Channels.RELATIVECENTERX)/1000.0), (float)(rc.readBroadcast(Channels.RELATIVECENTERY)/1000.0));
 			expectedFriendlyCenter = new MapLocation((float) (rc.readBroadcast(Channels.FRIENDLYARCHONX)/1000.0), (float)(rc.readBroadcast(Channels.FRIENDLYARCONY)/1000.0));
 
 			
@@ -55,7 +56,7 @@ public class MoveAttackLoop {
 			System.out.println("not close to rally point yet: "+distanceToRally);
 			
 			//close enough to count as reaching it
-			if(distanceToRally<6){
+			if(distanceToRally<7){
 				System.out.println("At rally point");
 				arrivedAtRallyPoint=true;
 			}
@@ -70,7 +71,7 @@ public class MoveAttackLoop {
 		
 
 		//if at rally, periodically assign new destinations to people
-		if(arrivedAtRallyPoint && rc.getRoundNum()%100==0 && rc.getRoundNum()>400 && !receivedNewTargetLocation){
+		if(arrivedAtRallyPoint && rc.getRoundNum()%80==0 && rc.getRoundNum()>400 && !receivedNewTargetLocation){
 			System.out.println("recieved new target point");
 			receivedNewTargetLocation = true;
 			targetPoint = expectedEnemyCenter;
@@ -92,6 +93,15 @@ public class MoveAttackLoop {
 	private static void generalMoveToLoc(MapLocation targetLocation) throws GameActionException {
 		RobotController rc = RobotPlayer.rc;
 		
+		//If target in correct quadrant, move accordingly, resetting any targetlocation info
+		
+		//setting up spotted in each quadrant
+			MapLocation upperRight = new MapLocation(rc.readBroadcast(Channels.URSPOTTEDENEMYX), rc.readBroadcast(Channels.URSPOTTEDENEMYY));
+			MapLocation upperLeft = new MapLocation(rc.readBroadcast(Channels.ULSPOTTEDENEMYX), rc.readBroadcast(Channels.ULSPOTTEDENEMYY));
+			MapLocation lowerRight = new MapLocation(rc.readBroadcast(Channels.LRSPOTTEDENEMYX), rc.readBroadcast(Channels.LRSPOTTEDENEMYY));
+			MapLocation lowerLeft = new MapLocation(rc.readBroadcast(Channels.LLSPOTTEDENEMYX), rc.readBroadcast(Channels.LLSPOTTEDENEMYY));
+		
+		
 		//If nearby target, move accordingly
 		RobotInfo[] enemyRobots = Utility.checkForEnemyRobots();
 		System.out.println("in general move");
@@ -100,9 +110,11 @@ public class MoveAttackLoop {
 			if (rc.getType()==RobotType.SOLDIER){
 				SoldierAI.moveAroundHostiles(enemyRobots);
 			}
+			
+			reportLocation(enemyRobots[0]);
 		}
 		
-		//If target in correct quadrant, move accordingly, resetting any targetlocation info
+				
 		//in emergency, move accordingly
 		//else
 		
@@ -121,8 +133,60 @@ public class MoveAttackLoop {
 		}else{
 			Utility.moveRandom();
 		}
+		
+		//if close to a reported location and it is empty, report empty
+		if(Utility.distanceBetweenMapLocations(rc.getLocation(), upperRight)<2.1){
+			rc.broadcast(Channels.URSPOTTEDENEMYX, 10000);
+			rc.broadcast(Channels.URSPOTTEDENEMYY, 10000);
+		}
+		if(Utility.distanceBetweenMapLocations(rc.getLocation(), upperLeft)<2.1){
+			rc.broadcast(Channels.ULSPOTTEDENEMYX, 10000);
+			rc.broadcast(Channels.ULSPOTTEDENEMYY, 10000);
+		}
+		if(Utility.distanceBetweenMapLocations(rc.getLocation(), lowerRight)<2.1){
+			rc.broadcast(Channels.LRSPOTTEDENEMYX, 10000);
+			rc.broadcast(Channels.LRSPOTTEDENEMYY, 10000);
+		}
+		if(Utility.distanceBetweenMapLocations(rc.getLocation(), lowerLeft)<2.1){
+			rc.broadcast(Channels.LLSPOTTEDENEMYX, 10000);
+			rc.broadcast(Channels.LLSPOTTEDENEMYY, 10000);
+		}
 	}
 	
+	private static void reportLocation(RobotInfo robotInfo) throws GameActionException {
+		RobotController rc = RobotPlayer.rc;
+		float targetX=robotInfo.location.x;
+		float targetY=robotInfo.location.y;
+		
+		if(targetX>centerPoint.x){//than target is right of center
+			if(targetY>centerPoint.y){//than target is above center
+				
+				rc.broadcast(Channels.URSPOTTEDENEMYX, (int)targetX);
+				rc.broadcast(Channels.URSPOTTEDENEMYY, (int)targetY);
+				
+			}else{ //below center
+				
+				rc.broadcast(Channels.LRSPOTTEDENEMYX, (int)targetX);
+				rc.broadcast(Channels.LRSPOTTEDENEMYY, (int)targetY);
+				
+			}
+		}else{ //than target is left of center
+			if(targetY>centerPoint.y){//than target is above center
+				
+				rc.broadcast(Channels.ULSPOTTEDENEMYX, (int)targetX);
+				rc.broadcast(Channels.ULSPOTTEDENEMYY, (int)targetY);
+				
+			}else{ //below center
+				
+				rc.broadcast(Channels.LLSPOTTEDENEMYX, (int)targetX);
+				rc.broadcast(Channels.LLSPOTTEDENEMYY, (int)targetY);
+				
+			}
+		}
+		
+	}
+
+
 	public static void generalAttack(){
 		
 		RobotController rc = RobotPlayer.rc;

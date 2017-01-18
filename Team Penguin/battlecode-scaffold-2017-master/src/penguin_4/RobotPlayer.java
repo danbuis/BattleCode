@@ -34,7 +34,7 @@ public strictfp class RobotPlayer {
             	TankAI.runTank();
             	break;
             case SCOUT:
-            	//TODO
+            	ScoutAI.runScout();
             	break;
         }
         

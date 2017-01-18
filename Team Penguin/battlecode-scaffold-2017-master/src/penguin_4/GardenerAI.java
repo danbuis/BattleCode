@@ -12,6 +12,8 @@ public strictfp class GardenerAI {
     static Direction southwestDir = new Direction(northeastDir.radians+(float)Math.PI);
     static Direction southeastDir = new Direction(northwestDir.radians+(float)Math.PI);
     
+    static int patience=90;
+    
     //initialized as one direction for where to spawn units
     static Boolean placeNorthWest= true;
     static Boolean placeSouthEast = false;
@@ -24,7 +26,8 @@ public strictfp class GardenerAI {
     
     //gardener variables
     static Boolean foundSuitableLocation = false;
-    static Boolean initialSoldier = false;
+    static Boolean planted = false;
+   // static Boolean initialSoldier = false;
     static int lumberjacksBuilt = 0;
 
 	public static void runGardener() throws GameActionException {
@@ -37,6 +40,7 @@ public strictfp class GardenerAI {
 
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
+            	patience--;
             	
             	Utility.checkForNearbyTrees();
             	
@@ -45,9 +49,15 @@ public strictfp class GardenerAI {
             		GardenSpotAnalyzer.localBest();
             	}
             	
-            	if(!initialSoldier){
+            	if(rc.readBroadcast(Channels.FIRSTSCOUT)==0){
+            		if(tryToBuildUnit(RobotType.SCOUT)){
+            			rc.broadcast(Channels.FIRSTSCOUT, 1);
+            		}
+            	}
+            	
+            	if(rc.readBroadcast(Channels.FIRSTSOLDIER)==0){
             		if(tryToBuildUnit(RobotType.SOLDIER)){
-            			initialSoldier = true;
+            			rc.broadcast(Channels.FIRSTSOLDIER, 1);
             		}
             	}
             	
@@ -73,7 +83,7 @@ public strictfp class GardenerAI {
             	}
             	
             	//while still looking for a suitable location, go to best known
-            	if(!foundSuitableLocation){
+            	if(!planted && !foundSuitableLocation){
             		
             		float targetX = rc.readBroadcast(Channels.BESTGARDENERX)/1000;
             		float targetY = rc.readBroadcast(Channels.BESTGARDENERY)/1000;
@@ -83,22 +93,67 @@ public strictfp class GardenerAI {
             		MapLocation target = new MapLocation(targetX, targetY);
             		float dist = Utility.distanceBetweenMapLocations(rc.getLocation(), target);
             		
+            		//does target spot contain a gardener?
+        			RobotInfo robotAtTargetSpot=null;
+        			
+        			//is that robot me?
+        			boolean me=false;
+        			
+        			if(rc.canSenseLocation(target)){
+        				robotAtTargetSpot=rc.senseRobotAtLocation(target);
+        				
+        				if(robotAtTargetSpot!=null && robotAtTargetSpot.ID==rc.getID()){
+        					System.out.println("setting me to true");
+            				me=true;
+            			}else{
+            				System.out.println("setting me to false");
+            				me=false;
+            			}
+        			}
+        			
+        			
+        			
+        			
+        			
+        			if(robotAtTargetSpot!=null && !me){
+        				System.out.println("Oh no, someone else got there first!");
+        				//float target2ndX = rc.readBroadcast(Channels.SECONDBESTX)/1000;
+        				//float target2ndY = rc.readBroadcast(Channels.SECONDBESTY)/1000;
+        				
+        				Utility.moveRandom();
+        			}else{
+            		
             		//move to target
             		Utility.tryMoveToLocation(target, Math.min(rc.getType().strideRadius, dist));
 
+            		float remainingDistance = Utility.distanceBetweenMapLocations(rc.getLocation(), target);
             		//if close enough
-            		if(Utility.distanceBetweenMapLocations(rc.getLocation(), target)<0.001){
+            		if(remainingDistance<0.001 || patience==0){
             			foundSuitableLocation = true;
+            			planted = true;
+            			rc.broadcast(Channels.FIRSTPLANT, 1);
             			System.out.println("setting up here");
+            		}else if (remainingDistance<2){
+            			//if 2 away, check if its off the map
+            			if(!rc.onTheMap(target)){
+            				planted=true;
+                			rc.broadcast(Channels.FIRSTPLANT, 1);
+            			}
             		}
+        			}
             	}
             	
 
             	
-            	//if you have found a suitable location, begin growth process
             	//if enemy nearby, build a soldier
         		RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-            	if(foundSuitableLocation && robots.length==0){
+        		if (robots.length!=0){
+            		tryToBuildUnit(RobotType.SOLDIER);
+            	}
+        		
+            	//if you have found a suitable location, begin growth process
+
+            	if(planted && robots.length==0){
             		
             		//first plant the correct 5 trees
             		if(!placeEast && rc.canPlantTree(eastDir)){
@@ -142,26 +197,27 @@ public strictfp class GardenerAI {
             				}
             			}
             		}
+            	}
             		
             		//Decide what to build
             		//if there is a tree nearby, build a lumberjack
             		TreeInfo[] trees = rc.senseNearbyTrees(-1, Team.NEUTRAL);
             		if(trees.length!=0){
             			tryToBuildUnit(RobotType.LUMBERJACK);
+            			System.out.println("force to lumberjack");
             		}
             		
             		if(rc.getTeamBullets()>100){
-            			if(Math.random()>0.9){
+            			float random=(float) Math.random();
+            			if(random>0.9){
             				tryToBuildUnit(RobotType.SOLDIER);
-            			}else{
-            				System.out.println("Try to build tank!");
-            				tryToBuildUnit(RobotType.TANK);
+            			}else if(random>0.92 && lumberjacksBuilt<4){
+            				System.out.println("Try to build lumberjack randomly!");
+            				tryToBuildUnit(RobotType.LUMBERJACK);
             			}
             		}
           
-            	}else if (robots.length!=0){
-            		tryToBuildUnit(RobotType.SOLDIER);
-            	}
+            	 
                 
             	
             	
@@ -198,6 +254,10 @@ public strictfp class GardenerAI {
 			}
 			
 			count++;
+		}
+		
+		if(built&&robotType==RobotType.LUMBERJACK){
+			lumberjacksBuilt++;
 		}
 		
 		return built;

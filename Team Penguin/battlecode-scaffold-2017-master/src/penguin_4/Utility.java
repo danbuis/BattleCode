@@ -31,6 +31,7 @@ public strictfp class Utility {
  
     
     static boolean tryMoveToLocation(MapLocation loc, float speed) throws GameActionException{
+    	System.out.println("tryMoveTo :"+loc.x+","+loc.y);
     	RobotController rc = RobotPlayer.rc;
     	Direction dir = rc.getLocation().directionTo(loc);
     	if(dir!=null){
@@ -320,12 +321,23 @@ public strictfp class Utility {
   			//we found one!
   			System.out.println(treeInfo.length+" trees found");
   			if(treeInfo.length!=0){
-  				System.out.println("Broadcasing the first one");
-  				rc.broadcast(Channels.NEUTRALTREEX, (int)(treeInfo[0].location.x*1000));
-  				rc.broadcast(Channels.NEUTRALTREEY, (int)(treeInfo[0].location.y*1000));
   				
-  				System.out.println("X: "+treeInfo[0].location.x);
-  				System.out.println("Y: "+treeInfo[0].location.y);
+  				//if(rc.getType()==RobotType.GARDENER){
+  					System.out.println("Broadcasting the first one to gardener channels");
+  					rc.broadcast(Channels.NEUTRALTREEX, (int)(treeInfo[0].location.x*1000));
+  					rc.broadcast(Channels.NEUTRALTREEY, (int)(treeInfo[0].location.y*1000));
+  				
+  					System.out.println("X: "+treeInfo[0].location.x);
+  					System.out.println("Y: "+treeInfo[0].location.y);
+  				/*}else{
+  					System.out.println("Broadcasting the first one to other channels");
+  	  				rc.broadcast(Channels.BACKUPTREEX, (int)(treeInfo[0].location.x*1000));
+  	  				rc.broadcast(Channels.BACKUPTREEY, (int)(treeInfo[0].location.y*1000));
+  	  				
+  	  				System.out.println("X: "+treeInfo[0].location.x);
+  	  				System.out.println("Y: "+treeInfo[0].location.y);
+  					
+  				}*/
   			}
   		}
 	}

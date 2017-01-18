@@ -31,7 +31,7 @@ public class SoldierAI {
                 	float range = Utility.distanceBetweenMapLocations(rc.getLocation(), robotToAttack.location);
                 	
                 	//how much to fire
-                	if(robotToAttack.type==RobotType.ARCHON || robotToAttack.type == RobotType.GARDENER){
+                	if((robotToAttack.type==RobotType.ARCHON || robotToAttack.type == RobotType.GARDENER)&&rc.getTeamBullets()>110){
                 		if(rc.canFirePentadShot()){
                 			rc.firePentadShot(rc.getLocation().directionTo(robotToAttack.location));
                 		}
