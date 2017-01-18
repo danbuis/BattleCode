@@ -362,4 +362,14 @@ public strictfp class Utility {
 		return returnTree;
 	}
 
+	public static void tryToSpotNearbyEnemies() throws GameActionException {
+		RobotController rc =RobotPlayer.rc;
+		RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		
+		if(nearbyEnemies.length!=0){
+			MoveAttackLoop.reportLocation(nearbyEnemies[0]);
+		}
+		
+	}
+
 }

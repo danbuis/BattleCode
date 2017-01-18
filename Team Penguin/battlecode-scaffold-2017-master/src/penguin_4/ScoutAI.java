@@ -22,6 +22,8 @@ package penguin_4;
 	        // The code you want your robot to perform every round should be in this loop
 	        while (true) {
 	        	try{
+	        		
+	        		Utility.tryToSpotNearbyEnemies();
 
 	            TreeInfo[] nearbyTrees = rc.senseNearbyTrees(-1,Team.NEUTRAL);
 	            System.out.println("sensing this many trees: "+nearbyTrees.length);

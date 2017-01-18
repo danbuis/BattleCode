@@ -25,6 +25,9 @@ public strictfp class ArchonAI {
             	rc.setIndicatorDot(new MapLocation(rc.readBroadcast(Channels.URSPOTTEDENEMYX), rc.readBroadcast(Channels.URSPOTTEDENEMYY)), 0, 0, 0);
             	rc.setIndicatorDot(new MapLocation(rc.readBroadcast(Channels.ULSPOTTEDENEMYX), rc.readBroadcast(Channels.ULSPOTTEDENEMYY)), 0, 0, 0);
 
+            	//search for nearby enemies
+            	Utility.tryToSpotNearbyEnemies();
+            	
             	
             	if(rc.getRoundNum()%3==0){
             		//reset best value

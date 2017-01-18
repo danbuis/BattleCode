@@ -176,7 +176,7 @@ public class MoveAttackLoop {
 		}
 	}
 	
-	private static void reportLocation(RobotInfo robotInfo) throws GameActionException {
+	public static void reportLocation(RobotInfo robotInfo) throws GameActionException {
 		RobotController rc = RobotPlayer.rc;
 		float targetX=robotInfo.location.x;
 		float targetY=robotInfo.location.y;
