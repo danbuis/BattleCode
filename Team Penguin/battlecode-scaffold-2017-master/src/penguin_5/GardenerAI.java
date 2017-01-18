@@ -1,6 +1,7 @@
 package penguin_5;
 
 import battlecode.common.*;
+import penguin_5.Utility;
 
 public strictfp class GardenerAI {
 	
@@ -83,7 +84,12 @@ public strictfp class GardenerAI {
             		float diffToNorthWest = directionToRally.degreesBetween(northwestDir);
             		float diffToSouthEast = directionToRally.degreesBetween(southeastDir);
             		
-            		if(Math.abs(diffToNorthWest)>Math.abs(diffToSouthEast)){
+            		/*if(Math.abs(diffToNorthWest)>Math.abs(diffToSouthEast)){
+            			placeNorthWest = false;
+            			placeSouthEast = true;
+            		}*/
+            		
+            		if(edge == 2 || edge == 3){
             			placeNorthWest = false;
             			placeSouthEast = true;
             		}
@@ -131,11 +137,13 @@ public strictfp class GardenerAI {
         			}else{
             		
             		//move to target
-            		Utility.tryMoveToLocation(target, Math.min(rc.getType().strideRadius, dist));
+            		if(patience>0) {
+            			Utility.tryMoveToLocation(target, Math.min(rc.getType().strideRadius, dist));
+            		
 
             		float remainingDistance = Utility.distanceBetweenMapLocations(rc.getLocation(), target);
             		//if close enough
-            		if(remainingDistance<0.001 || patience==0){
+            		if(remainingDistance<0.001){
             			foundSuitableLocation = true;
             			planted = true;
             			rc.broadcast(Channels.FIRSTPLANT, 1);
@@ -146,6 +154,29 @@ public strictfp class GardenerAI {
             				planted=true;
                 			rc.broadcast(Channels.FIRSTPLANT, 1);
             			}
+            		}
+            			//if out of patience, jitter old school
+            		}else {
+            			boolean farEnoughFromArchon = true;
+                		RobotInfo[] robots = rc.senseNearbyRobots(3);
+                		for(RobotInfo info: robots){
+                			if(info.type==RobotType.ARCHON){
+                				farEnoughFromArchon = false;
+                				break;
+                			}
+                		}
+                		
+                		
+                		TreeInfo[] trees = rc.senseNearbyTrees((float)3, Team.NEUTRAL);
+                		TreeInfo[] friendTrees = rc.senseNearbyTrees((float)5, rc.getTeam());
+                		
+                		if(farEnoughFromArchon && trees.length==0 && friendTrees.length==0){
+                			foundSuitableLocation = true;
+                			planted=true;
+                		}else{
+                			Utility.moveRandom();
+                		}
+            			
             		}
         			}
             	}

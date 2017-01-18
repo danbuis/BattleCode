@@ -130,10 +130,10 @@ public class MoveAttackLoop {
 		
 		else if(receivedNewTargetLocation && (distUR<120||distUL<120||distLR<120||distLL<120)){
 			System.out.println("Printing distances to spotted");
-			System.out.println(distUR);
-			System.out.println(distUL);
-			System.out.println(distLL);
-			System.out.println(distLR);
+			System.out.println(distUR+"("+upperRight.x+","+upperRight.y+")");
+			System.out.println(distUL+"("+upperLeft.x+","+upperLeft.y+")");
+			System.out.println(distLL+"("+lowerLeft.x+","+lowerLeft.y+")");
+			System.out.println(distLR+"("+lowerRight.x+","+lowerRight.y+")");
 			
 				
 				if(distUR<distLR && distUR<distLL && distUR<distUL){ 

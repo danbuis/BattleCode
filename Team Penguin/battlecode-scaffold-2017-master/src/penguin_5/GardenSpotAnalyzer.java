@@ -9,12 +9,20 @@ public class GardenSpotAnalyzer {
 	//ArrayList<MapLocation> blacklist = new ArrayList<MapLocation>();
 	
 	static MapLocation[] initialArchons=null;
+	static MapLocation center = null;
 	
 	public static void localBest() throws GameActionException{
 		RobotController rc = RobotPlayer.rc;
 		//if not stored archon locs yet
 		if(initialArchons==null){
 			initialArchons = rc.getInitialArchonLocations(rc.getTeam());
+		}
+		
+		if (center==null){
+			float centerX = rc.readBroadcast(Channels.RELATIVECENTERX)/1000.0F;
+			float centerY = rc.readBroadcast(Channels.RELATIVECENTERY)/1000.0F;
+			
+			center = new MapLocation(centerX, centerY);
 		}
 		
 		Direction dirToCheck = new Direction(0);
@@ -84,6 +92,11 @@ public class GardenSpotAnalyzer {
 					}
 					
 					totalTreeHealth+=(800*notfriendlys.length);
+					
+					//include distance from center as a negative
+					float distFromCenter = Utility.distanceBetweenMapLocations(checkLocation, center);
+					totalTreeHealth-=(10*distFromCenter);
+					
 					System.out.println("with a total health of "+totalTreeHealth);
 					
 					for (RobotInfo info: nearBots){

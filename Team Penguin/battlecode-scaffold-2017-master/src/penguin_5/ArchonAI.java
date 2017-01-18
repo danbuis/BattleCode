@@ -38,7 +38,7 @@ public strictfp class ArchonAI {
             		}
             	}
             	
-            	Utility.checkForNearbyTrees();
+            	//Utility.checkForNearbyTrees();
             	
             	
             	//if 500+ bullets, donate
