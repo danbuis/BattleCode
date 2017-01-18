@@ -101,6 +101,10 @@ public class MoveAttackLoop {
 			MapLocation lowerRight = new MapLocation(rc.readBroadcast(Channels.LRSPOTTEDENEMYX), rc.readBroadcast(Channels.LRSPOTTEDENEMYY));
 			MapLocation lowerLeft = new MapLocation(rc.readBroadcast(Channels.LLSPOTTEDENEMYX), rc.readBroadcast(Channels.LLSPOTTEDENEMYY));
 		
+			float distUR=Utility.distanceBetweenMapLocations(rc.getLocation(), upperRight);
+			float distUL=Utility.distanceBetweenMapLocations(rc.getLocation(), upperLeft);
+			float distLR=Utility.distanceBetweenMapLocations(rc.getLocation(), lowerRight);
+			float distLL=Utility.distanceBetweenMapLocations(rc.getLocation(), lowerLeft);
 		
 		//If nearby target, move accordingly
 		RobotInfo[] enemyRobots = Utility.checkForEnemyRobots();
@@ -114,7 +118,26 @@ public class MoveAttackLoop {
 			reportLocation(enemyRobots[0]);
 		}
 		
+		//if there is a nearby target in quadant
+		
+		else if(distUR<100||distUL<100||distLR<100||distLL<100){
+			//and unit is free for reassignment
+			if(receivedNewTargetLocation){
 				
+				if(distUR<distLR && distUR<distLL && distUR<distUL){ 
+					Utility.tryMoveToLocation(upperRight, Math.min(rc.getType().strideRadius, distUR));
+				}else if(distLR<distUR && distLR<distLL && distLR<distUL){ 
+					Utility.tryMoveToLocation(lowerRight, Math.min(rc.getType().strideRadius, distLR));
+				}else if(distLL<distLR && distLL<distUR && distLL<distUL){ 
+					Utility.tryMoveToLocation(lowerLeft, Math.min(rc.getType().strideRadius, distLL));
+				}else{
+					Utility.tryMoveToLocation(upperRight, Math.min(rc.getType().strideRadius, distUR));
+				}
+				
+				
+			}
+		}
+		
 		//in emergency, move accordingly
 		//else
 		
@@ -135,19 +158,19 @@ public class MoveAttackLoop {
 		}
 		
 		//if close to a reported location and it is empty, report empty
-		if(Utility.distanceBetweenMapLocations(rc.getLocation(), upperRight)<2.1){
+		if(distUR<2.1){
 			rc.broadcast(Channels.URSPOTTEDENEMYX, 10000);
 			rc.broadcast(Channels.URSPOTTEDENEMYY, 10000);
 		}
-		if(Utility.distanceBetweenMapLocations(rc.getLocation(), upperLeft)<2.1){
+		if(distUL<2.1){
 			rc.broadcast(Channels.ULSPOTTEDENEMYX, 10000);
 			rc.broadcast(Channels.ULSPOTTEDENEMYY, 10000);
 		}
-		if(Utility.distanceBetweenMapLocations(rc.getLocation(), lowerRight)<2.1){
+		if(distLR<2.1){
 			rc.broadcast(Channels.LRSPOTTEDENEMYX, 10000);
 			rc.broadcast(Channels.LRSPOTTEDENEMYY, 10000);
 		}
-		if(Utility.distanceBetweenMapLocations(rc.getLocation(), lowerLeft)<2.1){
+		if(distLL<2.1){
 			rc.broadcast(Channels.LLSPOTTEDENEMYX, 10000);
 			rc.broadcast(Channels.LLSPOTTEDENEMYY, 10000);
 		}

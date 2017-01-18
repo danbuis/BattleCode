@@ -19,6 +19,13 @@ public strictfp class ArchonAI {
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
             	
+            	//draw spotted locations
+            	rc.setIndicatorDot(new MapLocation(rc.readBroadcast(Channels.LLSPOTTEDENEMYX), rc.readBroadcast(Channels.LLSPOTTEDENEMYY)), 0, 0, 0);
+            	rc.setIndicatorDot(new MapLocation(rc.readBroadcast(Channels.LRSPOTTEDENEMYX), rc.readBroadcast(Channels.LRSPOTTEDENEMYY)), 0, 0, 0);
+            	rc.setIndicatorDot(new MapLocation(rc.readBroadcast(Channels.URSPOTTEDENEMYX), rc.readBroadcast(Channels.URSPOTTEDENEMYY)), 0, 0, 0);
+            	rc.setIndicatorDot(new MapLocation(rc.readBroadcast(Channels.ULSPOTTEDENEMYX), rc.readBroadcast(Channels.ULSPOTTEDENEMYY)), 0, 0, 0);
+
+            	
             	if(rc.getRoundNum()%3==0){
             		//reset best value
             		rc.broadcast(Channels.BESTGARDENERVALUE, 99999999);
