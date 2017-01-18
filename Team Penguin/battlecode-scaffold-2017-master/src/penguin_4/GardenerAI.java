@@ -76,7 +76,14 @@ public strictfp class GardenerAI {
             		if(edge!=0){
             			homeEdge = edge;
             		}
-            		if(edge == 2 || edge == 3){
+            		
+            		MapLocation rallyPoint = MoveAttackLoop.calculateRallyPoint();
+            		Direction directionToRally = rc.getLocation().directionTo(rallyPoint);
+            		
+            		float diffToNorthWest = directionToRally.degreesBetween(northwestDir);
+            		float diffToSouthEast = directionToRally.degreesBetween(southeastDir);
+            		
+            		if(Math.abs(diffToNorthWest)>Math.abs(diffToSouthEast)){
             			placeNorthWest = false;
             			placeSouthEast = true;
             		}

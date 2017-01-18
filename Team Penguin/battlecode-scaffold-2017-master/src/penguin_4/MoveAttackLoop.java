@@ -36,11 +36,7 @@ public class MoveAttackLoop {
 		System.out.println("first check: " + (rallyPoint.x<1));
 		//check to see if we have the rally point stored
 		if(rallyPoint.x<0){
-			centerPoint = new MapLocation((float) (rc.readBroadcast(Channels.RELATIVECENTERX)/1000.0), (float)(rc.readBroadcast(Channels.RELATIVECENTERY)/1000.0));
-			expectedFriendlyCenter = new MapLocation((float) (rc.readBroadcast(Channels.FRIENDLYARCHONX)/1000.0), (float)(rc.readBroadcast(Channels.FRIENDLYARCONY)/1000.0));
-
-			
-			rallyPoint = new MapLocation((expectedFriendlyCenter.x+centerPoint.x)/2, (expectedFriendlyCenter.y+centerPoint.y)/2);
+			rallyPoint = calculateRallyPoint();
 			System.out.println("setting rally point");
 		}
 		
@@ -84,6 +80,18 @@ public class MoveAttackLoop {
 		
 	}
 	
+	public static MapLocation calculateRallyPoint() throws GameActionException {
+		RobotController rc = RobotPlayer.rc;
+		System.out.println("calculating rally point");
+		
+		centerPoint = new MapLocation((float) (rc.readBroadcast(Channels.RELATIVECENTERX)/1000.0), (float)(rc.readBroadcast(Channels.RELATIVECENTERY)/1000.0));
+		expectedFriendlyCenter = new MapLocation((float) (rc.readBroadcast(Channels.FRIENDLYARCHONX)/1000.0), (float)(rc.readBroadcast(Channels.FRIENDLYARCONY)/1000.0));
+
+		
+		return new MapLocation((expectedFriendlyCenter.x+centerPoint.x)/2, (expectedFriendlyCenter.y+centerPoint.y)/2);
+		
+	}
+
 	/**
 	 * general movement algorithm.  Checks for enemies and breaks plan accordingly.
 	 * @param rallyPoint2
@@ -118,31 +126,31 @@ public class MoveAttackLoop {
 			reportLocation(enemyRobots[0]);
 		}
 		
-		//if there is a nearby target in quadant
+		//if there is a nearby target in quadrant
 		
-		else if(distUR<100||distUL<100||distLR<100||distLL<100){
-			//and unit is free for reassignment
-			if(receivedNewTargetLocation){
+		else if(receivedNewTargetLocation && (distUR<120||distUL<120||distLR<120||distLL<120)){
+			System.out.println("Printing distances to spotted");
+			System.out.println(distUR);
+			System.out.println(distUL);
+			System.out.println(distLL);
+			System.out.println(distLR);
+			
 				
 				if(distUR<distLR && distUR<distLL && distUR<distUL){ 
+					//System.out.println("moving UR");
 					Utility.tryMoveToLocation(upperRight, Math.min(rc.getType().strideRadius, distUR));
 				}else if(distLR<distUR && distLR<distLL && distLR<distUL){ 
 					Utility.tryMoveToLocation(lowerRight, Math.min(rc.getType().strideRadius, distLR));
 				}else if(distLL<distLR && distLL<distUR && distLL<distUL){ 
 					Utility.tryMoveToLocation(lowerLeft, Math.min(rc.getType().strideRadius, distLL));
 				}else{
-					Utility.tryMoveToLocation(upperRight, Math.min(rc.getType().strideRadius, distUR));
+					Utility.tryMoveToLocation(upperLeft, Math.min(rc.getType().strideRadius, distUL));
 				}
-				
-				
-			}
-		}
-		
+
+		}	
 		//in emergency, move accordingly
 		//else
 		
-		
-
 		else if (targetLocation!=null){
 			Utility.tryMoveToLocation(targetLocation, Math.min(rc.getType().strideRadius, Utility.distanceBetweenMapLocations(targetLocation, rc.getLocation())));
 			

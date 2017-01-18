@@ -290,7 +290,7 @@ public strictfp class Utility {
     	float distanceY = loc1.y-loc2.y;
     	
     	float totalSquared = (distanceX*distanceX)+(distanceY*distanceY);
-    	System.out.println("distance between = "+Math.sqrt(totalSquared));
+    	//System.out.println("distance between = "+Math.sqrt(totalSquared));
     	
     	return (float) Math.sqrt(totalSquared);
     	

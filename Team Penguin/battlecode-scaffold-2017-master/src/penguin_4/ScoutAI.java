@@ -109,14 +109,14 @@ package penguin_4;
 			//shoot at closest gardener
 			
 			if (robots.length!=0){
-				float closestDist = 99999;
+				float leastHealth = 99999;
 				RobotInfo target =  null;
 				
 				for(RobotInfo info:robots){
 					if(info.type==RobotType.GARDENER){
-						if(Utility.distanceBetweenMapLocations(rc.getLocation(), info.location)<closestDist){
+						if(info.getHealth()<leastHealth){
 							target = info;
-							closestDist = Utility.distanceBetweenMapLocations(rc.getLocation(), info.location);
+							leastHealth=info.getHealth();
 						}
 					}
 				}

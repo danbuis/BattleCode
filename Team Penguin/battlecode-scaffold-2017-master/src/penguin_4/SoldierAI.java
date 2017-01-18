@@ -35,12 +35,12 @@ public class SoldierAI {
                 		if(rc.canFirePentadShot()){
                 			rc.firePentadShot(rc.getLocation().directionTo(robotToAttack.location));
                 		}
-                	}else if (range<4){
-                		if(rc.canFireTriadShot()&& rc.getTeamBullets()>310){
+                	}else if (range<2.6){
+                		if(rc.canFirePentadShot()&& rc.getTeamBullets()>100){
                 			rc.fireTriadShot(rc.getLocation().directionTo(robotToAttack.location));
                 		}
-                	} else if (range<2.5){
-                		if(rc.canFireTriadShot()){
+                	} else if (range<4){
+                		if(rc.canFireTriadShot()&& rc.getTeamBullets()>310){
                 			rc.fireTriadShot(rc.getLocation().directionTo(robotToAttack.location));
                 		}
                 	}else{
